@@ -1,0 +1,70 @@
+:root {
+  /* Color Palette */
+  --color-bg: #17151B;
+  --color-bg-elevated: #1F1C25;
+  --color-bg-subtle: #24202B;
+
+  --color-text-primary: #E9E1D6;
+  --color-text-secondary: #A69F96;
+  --color-text-muted: #6B6560;
+
+  --color-accent-violet: #C6A6FF;
+  --color-accent-violet-glow: rgba(198, 166, 255, 0.18);
+  --color-accent-ember: #E5A66D;
+  --color-accent-ember-glow: rgba(229, 166, 109, 0.15);
+
+  --color-border-subtle: rgba(233, 225, 214, 0.08);
+  --color-border-hover: rgba(198, 166, 255, 0.3);
+
+  /* Typography */
+  --font-serif: "Cinzel", "Didot", "Bodoni MT", "Times New Roman", Georgia, serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+
+  --font-size-2xs: 0.6875rem;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.5rem;
+  --font-size-2xl: 2.25rem;
+  --font-size-3xl: 3.5rem;
+  --font-size-hero: clamp(3.25rem, 10vw, 8.5rem);
+
+  --line-height-tight: 1.05;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.7;
+
+  --letter-spacing-tight: -0.02em;
+  --letter-spacing-normal: 0;
+  --letter-spacing-wide: 0.15em;
+  --letter-spacing-widest: 0.3em;
+
+  /* Spacing */
+  --space-2xs: 0.25rem;
+  --space-xs: 0.5rem;
+  --space-sm: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 2.5rem;
+  --space-xl: 4rem;
+  --space-2xl: 6rem;
+  --space-3xl: 8rem;
+
+  /* Layout */
+  --site-max-width: 1440px;
+  --header-height: 5rem;
+  --pad-page-x: clamp(1rem, 4vw, 4rem);
+
+  /* Transitions */
+  --ease-editorial: cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-fast: 0.2s var(--ease-editorial);
+  --transition-smooth: 0.45s var(--ease-editorial);
+
+  /* Elevation / Stacking */
+  --z-bg: 0;
+  --z-canvas: 1;
+  --z-scenery: 2;
+  --z-content: 10;
+  --z-header: 50;
+  --z-cursor: 9999;
+}
