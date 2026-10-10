@@ -36,6 +36,13 @@ export interface ExperienceCanvasProps {
   readonly onSelectArchitecture?: (id: string) => void;
   readonly hoveredArchitectureId?: string | null;
   readonly onHoverArchitecture?: (id: string | null) => void;
+  readonly activeArtifactId?: string;
+  readonly onSelectArtifact?: (id: string) => void;
+  readonly hoveredArtifactId?: string | null;
+  readonly onHoverArtifact?: (id: string | null) => void;
+  readonly artifactTriggerTimestamp?: number;
+  readonly resonanceTriggerTimestamp?: number;
+  readonly onTriggerResonance?: () => void;
 }
 
 export const ExperienceCanvas: React.FC<ExperienceCanvasProps> = ({
@@ -44,6 +51,13 @@ export const ExperienceCanvas: React.FC<ExperienceCanvasProps> = ({
   onSelectArchitecture,
   hoveredArchitectureId,
   onHoverArchitecture,
+  activeArtifactId,
+  onSelectArtifact,
+  hoveredArtifactId,
+  onHoverArtifact,
+  artifactTriggerTimestamp,
+  resonanceTriggerTimestamp,
+  onTriggerResonance,
 }) => {
   const [canRenderWebGL, setCanRenderWebGL] = useState(false);
 
@@ -82,12 +96,20 @@ export const ExperienceCanvas: React.FC<ExperienceCanvasProps> = ({
             }}
             dpr={[1, 1.5]}
             eventSource={document.body}
+            eventPrefix="client"
           >
             <ExperienceWorld
               activeArchitectureId={activeArchitectureId}
               onSelectArchitecture={onSelectArchitecture}
               hoveredArchitectureId={hoveredArchitectureId}
               onHoverArchitecture={onHoverArchitecture}
+              activeArtifactId={activeArtifactId}
+              onSelectArtifact={onSelectArtifact}
+              hoveredArtifactId={hoveredArtifactId}
+              onHoverArtifact={onHoverArtifact}
+              artifactTriggerTimestamp={artifactTriggerTimestamp}
+              resonanceTriggerTimestamp={resonanceTriggerTimestamp}
+              onTriggerResonance={onTriggerResonance}
             />
           </Canvas>
         </Suspense>

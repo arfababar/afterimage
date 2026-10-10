@@ -67,6 +67,15 @@ interface FormItemProps {
   children: (highlight: number) => React.ReactNode;
 }
 
+function isTreeVisible(obj: THREE.Object3D | null): boolean {
+  let curr = obj;
+  while (curr) {
+    if (!curr.visible) return false;
+    curr = curr.parent;
+  }
+  return true;
+}
+
 const ArchitecturalFormItem: React.FC<FormItemProps> = ({
   id,
   basePosition,
@@ -87,7 +96,7 @@ const ArchitecturalFormItem: React.FC<FormItemProps> = ({
 
   useFrame((state, delta) => {
     const group = groupRef.current;
-    if (!group) return;
+    if (!group || !isTreeVisible(group)) return;
 
     // Compute target highlight (0 to 1)
     const targetHighlight = isActive ? 1.0 : isHovered ? 0.65 : 0.0;
@@ -210,12 +219,13 @@ export const SpatialArchitecture: React.FC<SpatialArchitectureProps> = ({
   const glassApertureMaterial = useMemo(() => {
     return new THREE.MeshPhysicalMaterial({
       color: new THREE.Color('#100D16'),
-      transmission: 0.72,
-      thickness: 1.2,
-      roughness: 0.18,
-      ior: 1.48,
+      roughness: 0.16,
+      metalness: 0.1,
+      clearcoat: 0.8,
+      clearcoatRoughness: 0.1,
       transparent: true,
-      opacity: 0.85,
+      opacity: 0.72,
+      ior: 1.48,
     });
   }, []);
 

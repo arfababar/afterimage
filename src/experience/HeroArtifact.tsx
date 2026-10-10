@@ -482,6 +482,7 @@ export const HeroArtifact: React.FC = () => {
   useFrame((state, delta) => {
     const group = groupRef.current;
     if (!group) return;
+    if (group.parent && group.parent.visible === false) return;
 
     // Smooth pointer response with gentle damping
     const targetPointerX = state.pointer.x * 0.22;
@@ -500,28 +501,33 @@ export const HeroArtifact: React.FC = () => {
 
     // Surface raycasting for cursor-following localized glow (fine pointer only)
     if (artifactHolderRef.current && !reducedMotionRef.current && isFinePointerRef.current) {
-      const pointerMoved =
-        Math.hypot(
-          state.pointer.x - lastRayPointer.current.x,
-          state.pointer.y - lastRayPointer.current.y
-        ) > 0.002;
+      const isNearActive =
+        !group.parent ||
+        (group.parent.position.y > -3.5 && group.parent.position.z > -1.5);
+      if (isNearActive) {
+        const dx = state.pointer.x - lastRayPointer.current.x;
+        const dy = state.pointer.y - lastRayPointer.current.y;
+        const pDistSq = dx * dx + dy * dy;
 
-      if (pointerMoved || targetGlowIntensity.current > 0) {
-        lastRayPointer.current.x = state.pointer.x;
-        lastRayPointer.current.y = state.pointer.y;
+        if (pDistSq > 0.00004) {
+          lastRayPointer.current.x = state.pointer.x;
+          lastRayPointer.current.y = state.pointer.y;
 
-        state.raycaster.setFromCamera(state.pointer, state.camera);
-        const hits = state.raycaster.intersectObjects(
-          artifactHolderRef.current.children,
-          true
-        );
+          state.raycaster.setFromCamera(state.pointer, state.camera);
+          const hits = state.raycaster.intersectObjects(
+            artifactHolderRef.current.children,
+            true
+          );
 
-        if (hits.length > 0) {
-          targetGlowPos.current.copy(hits[0].point);
-          targetGlowIntensity.current = 1.0;
-        } else {
-          targetGlowIntensity.current = 0.0;
+          if (hits.length > 0) {
+            targetGlowPos.current.copy(hits[0].point);
+            targetGlowIntensity.current = 1.0;
+          } else {
+            targetGlowIntensity.current = 0.0;
+          }
         }
+      } else {
+        targetGlowIntensity.current = 0.0;
       }
     } else {
       targetGlowIntensity.current = 0.0;
@@ -636,6 +642,7 @@ export const HeroArtifact: React.FC = () => {
         geometry={haloGeometry}
         material={haloMaterial}
         position={[0, 0, -0.65]}
+        raycast={() => null}
       />
 
       {/* Central Translucent Premade Iridescent Sculpture with Procedural Fallback */}
@@ -657,7 +664,7 @@ export const HeroArtifact: React.FC = () => {
       />
 
       {/* Internal Concentric Echo / Dark Latent Core */}
-      <mesh ref={innerRef} geometry={innerGeometry}>
+      <mesh ref={innerRef} geometry={innerGeometry} raycast={() => null}>
         <meshStandardMaterial
           color="#16121C"
           emissive="#2E1B4E"
@@ -668,7 +675,7 @@ export const HeroArtifact: React.FC = () => {
       </mesh>
 
       {/* Tilted Latent Orbital Ring */}
-      <mesh ref={ringRef} geometry={ringGeometry} rotation={[0.55, 0.2, 0]}>
+      <mesh ref={ringRef} geometry={ringGeometry} rotation={[0.55, 0.2, 0]} raycast={() => null}>
         <meshStandardMaterial
           color="#C6A6FF"
           roughness={0.3}
@@ -683,6 +690,7 @@ export const HeroArtifact: React.FC = () => {
         ref={particlesRef}
         geometry={particlesGeometry}
         material={particlesMaterial}
+        raycast={() => null}
       />
     </group>
   );

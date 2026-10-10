@@ -4,12 +4,18 @@ import { ExperienceCanvas } from '../experience/ExperienceCanvas';
 import { CustomCursor } from '../components/CustomCursor';
 import { gsap, useGSAP } from '../motion/registerGsap';
 import { ArchitectureId, ARCHITECTURE_DATA } from '../experience/SpatialArchitecture';
+import { ArtifactId, ARTIFACTS_DATA } from '../experience/ArtifactsShowcase';
 import { soundManager } from '../utils/soundManager';
 
 export const App: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [activeArchitectureId, setActiveArchitectureId] = useState<ArchitectureId>('vault');
   const [hoveredArchitectureId, setHoveredArchitectureId] = useState<string | null>(null);
+  const [activeArtifactId, setActiveArtifactId] = useState<ArtifactId>('glass');
+  const [hoveredArtifactId, setHoveredArtifactId] = useState<string | null>(null);
+  const [artifactTriggerTimestamp, setArtifactTriggerTimestamp] = useState<number>(0);
+  const [resonanceTriggerTimestamp, setResonanceTriggerTimestamp] = useState<number>(0);
+  const [resonanceState, setResonanceState] = useState<'coherent' | 'dispersed' | 'reforming'>('coherent');
   const [soundEnabled, setSoundEnabled] = useState(false);
 
   useEffect(() => {
@@ -35,205 +41,553 @@ export const App: React.FC = () => {
     soundManager.playArchetypeSelect(archId);
   };
 
+  const handleSelectArtifact = (id: string) => {
+    const artId = id as ArtifactId;
+    setActiveArtifactId(artId);
+    setArtifactTriggerTimestamp(Date.now());
+    soundManager.playArchetypeSelect(artId);
+  };
+
+  const handleTriggerActiveArtifact = () => {
+    setArtifactTriggerTimestamp(Date.now());
+    soundManager.playArchetypeSelect(activeArtifactId);
+  };
+
+  const handleTriggerResonance = () => {
+    setResonanceTriggerTimestamp(Date.now());
+    setResonanceState('dispersed');
+    soundManager.playArchetypeSelect();
+    setTimeout(() => {
+      setResonanceState('reforming');
+    }, 850);
+    setTimeout(() => {
+      setResonanceState('coherent');
+    }, 2600);
+  };
+
+  // Restrained magnetic cursor effect for primary buttons on desktop devices
+  useEffect(() => {
+    const finePointerQuery = window.matchMedia('(pointer: fine)');
+    const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    if (!finePointerQuery.matches || reducedMotionQuery.matches) {
+      return;
+    }
+
+    const primaryButtons = containerRef.current?.querySelectorAll<HTMLElement>(
+      '.artifacts-trigger-btn, .resonance-trigger-btn, .coda-return-button'
+    );
+    if (!primaryButtons || primaryButtons.length === 0) return;
+
+    const cleanups: Array<() => void> = [];
+
+    primaryButtons.forEach((btn) => {
+      const xTo = gsap.quickTo(btn, 'x', { duration: 0.32, ease: 'power2.out' });
+      const yTo = gsap.quickTo(btn, 'y', { duration: 0.32, ease: 'power2.out' });
+
+      let cachedCx = 0;
+      let cachedCy = 0;
+      let cachedHalfW = 1;
+      let cachedHalfH = 1;
+      let hasCachedRect = false;
+
+      const cacheRect = () => {
+        const rect = btn.getBoundingClientRect();
+        cachedCx = rect.left + rect.width / 2;
+        cachedCy = rect.top + rect.height / 2;
+        cachedHalfW = rect.width / 2 || 1;
+        cachedHalfH = rect.height / 2 || 1;
+        hasCachedRect = true;
+      };
+
+      const onMouseEnter = () => {
+        cacheRect();
+      };
+
+      const onMouseMove = (e: MouseEvent) => {
+        if (!hasCachedRect) cacheRect();
+        const maxOffset = 6; // Restrained magnetic threshold in px
+        const relX = (e.clientX - cachedCx) / cachedHalfW;
+        const relY = (e.clientY - cachedCy) / cachedHalfH;
+        const targetX = Math.max(-maxOffset, Math.min(maxOffset, relX * maxOffset));
+        const targetY = Math.max(-maxOffset, Math.min(maxOffset, relY * maxOffset));
+        xTo(targetX);
+        yTo(targetY);
+      };
+
+      const onMouseLeave = () => {
+        hasCachedRect = false;
+        gsap.to(btn, {
+          x: 0,
+          y: 0,
+          duration: 0.55,
+          ease: 'elastic.out(1.1, 0.4)',
+          overwrite: 'auto',
+        });
+      };
+
+      btn.addEventListener('mouseenter', onMouseEnter, { passive: true });
+      btn.addEventListener('mousemove', onMouseMove, { passive: true });
+      btn.addEventListener('mouseleave', onMouseLeave);
+
+      cleanups.push(() => {
+        btn.removeEventListener('mouseenter', onMouseEnter);
+        btn.removeEventListener('mousemove', onMouseMove);
+        btn.removeEventListener('mouseleave', onMouseLeave);
+        gsap.set(btn, { x: 0, y: 0 });
+      });
+    });
+
+    return () => {
+      cleanups.forEach((cleanup) => cleanup());
+    };
+  }, [activeArtifactId]);
+
   useGSAP(
     () => {
       const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       if (prefersReduced) return;
 
-      // 1. Initial mount cinematic reveal for THRESHOLD
+      // ========================================================================
+      // 1. THRESHOLD (Section 01) — Initial mount entrance
+      // Headings emerge from 3D depth, lines reveal progressively, prose glides up
+      // ========================================================================
       const introTl = gsap.timeline({ defaults: { ease: 'power2.out' } });
 
       introTl
         .fromTo(
-          '.hero-pretitle',
-          { opacity: 0, y: 16 },
-          { opacity: 1, y: 0, duration: 0.8 }
+          '.hero-pretitle__indicator',
+          { scaleX: 0, opacity: 0 },
+          { scaleX: 1, opacity: 1, duration: 0.8, ease: 'expo.out' },
+          0
         )
         .fromTo(
-          '.hero-title .title-reveal-word',
-          { y: '105%', opacity: 0 },
-          { y: '0%', opacity: 1, duration: 1.05, stagger: 0.12, ease: 'power3.out' },
-          '-=0.5'
+          '.hero-pretitle span:last-child',
+          { opacity: 0, x: -8, letterSpacing: '0.22em' },
+          { opacity: 1, x: 0, letterSpacing: '0.15em', duration: 0.75, ease: 'power2.out' },
+          0.12
+        )
+        .fromTo(
+          '#hero-title .title-reveal-word',
+          { y: '115%', rotateX: -24, z: -35, opacity: 0 },
+          { y: '0%', rotateX: 0, z: 0, opacity: 1, duration: 1.25, stagger: 0.18, ease: 'power3.out' },
+          0.22
         )
         .fromTo(
           '.hero-description',
-          { opacity: 0, y: 18 },
-          { opacity: 1, y: 0, duration: 0.85 },
-          '-=0.6'
+          { opacity: 0, y: 22, filter: 'blur(3px)' },
+          { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.95, ease: 'power2.out' },
+          0.55
         )
         .fromTo(
-          '.hero-details',
+          '.hero-details .detail-item',
           { opacity: 0, y: 16 },
-          { opacity: 1, y: 0, duration: 0.8 },
-          '-=0.5'
+          { opacity: 1, y: 0, duration: 0.7, stagger: 0.1, ease: 'power2.out' },
+          0.72
         )
         .fromTo(
           '.scroll-indicator',
-          { opacity: 0, y: 10 },
-          { opacity: 1, y: 0, duration: 0.8 },
-          '-=0.4'
+          { opacity: 0, y: 14 },
+          { opacity: 1, y: 0, duration: 0.75, ease: 'power2.out' },
+          0.90
         );
 
-      // 2. THRESHOLD dissolves and recedes as user scrolls towards AFTERIMAGE
-      gsap.to('.hero-content', {
-        opacity: 0.12,
-        y: -36,
-        scale: 0.98,
-        ease: 'power2.out',
+      // Multi-layered editorial parallax between THRESHOLD & AFTERIMAGE
+      gsap.to('#hero-title', {
+        y: -28,
+        opacity: 0.2,
+        ease: 'none',
         scrollTrigger: {
           trigger: '#afterimage',
           start: 'top bottom',
-          end: 'top 30%',
-          scrub: 1,
+          end: 'top 20%',
+          scrub: 1.2,
+        },
+      });
+      gsap.to('.hero-description, .hero-details', {
+        y: -55,
+        opacity: 0.1,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '#afterimage',
+          start: 'top bottom',
+          end: 'top 20%',
+          scrub: 1.2,
         },
       });
 
-      // 3. AFTERIMAGE entrance with staggered line reveals and scroll-linked depth
+      // ========================================================================
+      // 2. AFTERIMAGE (Section 02) — Triggered on viewport entrance
+      // Line-by-line heading reveal from depth, delayed labels, upward prose
+      // ========================================================================
       const afterimageTl = gsap.timeline({
         scrollTrigger: {
           trigger: '#afterimage',
-          start: 'top 85%',
-          end: 'top 35%',
-          scrub: 1,
+          start: 'top 75%',
+          toggleActions: 'play none none none',
+          once: true,
         },
+        defaults: { ease: 'power2.out' },
       });
 
       afterimageTl
         .fromTo(
-          '.afterimage-pretitle',
-          { opacity: 0.15, y: 24 },
-          { opacity: 1, y: 0, ease: 'power2.out' },
+          '.afterimage-pretitle__indicator',
+          { scaleX: 0, opacity: 0 },
+          { scaleX: 1, opacity: 1, duration: 0.75, ease: 'expo.out' },
           0
         )
         .fromTo(
-          '.afterimage-title .title-reveal-word',
-          { y: '100%', opacity: 0.1 },
-          { y: '0%', opacity: 1, stagger: 0.1, ease: 'power3.out' },
-          0.05
+          '.afterimage-pretitle span:last-child',
+          { opacity: 0, x: -8, letterSpacing: '0.22em' },
+          { opacity: 1, x: 0, letterSpacing: '0.15em', duration: 0.7, ease: 'power2.out' },
+          0.1
+        )
+        .fromTo(
+          '#afterimage-title .title-reveal-word',
+          { y: '115%', rotateX: -24, z: -35, opacity: 0 },
+          { y: '0%', rotateX: 0, z: 0, opacity: 1, duration: 1.2, stagger: 0.18, ease: 'power3.out' },
+          0.2
         )
         .fromTo(
           '.afterimage-description',
-          { opacity: 0.15, y: 24, scale: 0.98 },
-          { opacity: 1, y: 0, scale: 1, ease: 'power2.out' },
-          0.12
+          { opacity: 0, y: 22, filter: 'blur(3px)' },
+          { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.95, ease: 'power2.out' },
+          0.5
         )
         .fromTo(
-          '.afterimage-details',
-          { opacity: 0, y: 18 },
-          { opacity: 1, y: 0, ease: 'power2.out' },
-          0.2
+          '.afterimage-details .detail-item',
+          { opacity: 0, y: 16 },
+          { opacity: 1, y: 0, duration: 0.7, stagger: 0.1, ease: 'power2.out' },
+          0.68
         );
 
-      // 4. AFTERIMAGE dissolves and recedes as user scrolls towards SPATIAL ARCHITECTURE
-      gsap.to('.afterimage-content', {
-        opacity: 0.12,
-        y: -36,
-        scale: 0.98,
-        ease: 'power2.out',
+      // Multi-layered editorial parallax between AFTERIMAGE & ARCHITECTURE
+      gsap.to('#afterimage-title', {
+        y: -28,
+        opacity: 0.2,
+        ease: 'none',
         scrollTrigger: {
           trigger: '#architecture',
           start: 'top bottom',
-          end: 'top 30%',
-          scrub: 1,
+          end: 'top 20%',
+          scrub: 1.2,
+        },
+      });
+      gsap.to('.afterimage-description, .afterimage-details', {
+        y: -55,
+        opacity: 0.1,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '#architecture',
+          start: 'top bottom',
+          end: 'top 20%',
+          scrub: 1.2,
         },
       });
 
-      // 5. SPATIAL ARCHITECTURE entrance with poetic narrative and divider expansion
+      // ========================================================================
+      // 3. SPATIAL ARCHITECTURE (Section 03) — Triggered on viewport entrance
+      // Heading emergence from depth, horizontal divider sweep, prose & tabs
+      // ========================================================================
       const archTl = gsap.timeline({
         scrollTrigger: {
           trigger: '#architecture',
-          start: 'top 85%',
-          end: 'top 35%',
-          scrub: 1,
+          start: 'top 75%',
+          toggleActions: 'play none none none',
+          once: true,
         },
+        defaults: { ease: 'power2.out' },
       });
 
       archTl
         .fromTo(
-          '.architecture-pretitle',
-          { opacity: 0.15, y: 24 },
-          { opacity: 1, y: 0, ease: 'power2.out' },
+          '.architecture-pretitle__indicator',
+          { scaleX: 0, opacity: 0 },
+          { scaleX: 1, opacity: 1, duration: 0.75, ease: 'expo.out' },
           0
         )
         .fromTo(
-          '.architecture-title .title-reveal-word',
-          { y: '100%', opacity: 0.1 },
-          { y: '0%', opacity: 1, stagger: 0.1, ease: 'power3.out' },
-          0.05
+          '.architecture-pretitle span:last-child',
+          { opacity: 0, x: -8, letterSpacing: '0.22em' },
+          { opacity: 1, x: 0, letterSpacing: '0.15em', duration: 0.7, ease: 'power2.out' },
+          0.1
         )
         .fromTo(
-          '.architecture-narrative-block',
-          { opacity: 0.1, y: 24, scale: 0.98 },
-          { opacity: 1, y: 0, scale: 1, ease: 'power2.out' },
-          0.12
+          '#architecture-title .title-reveal-word',
+          { y: '115%', rotateX: -24, z: -35, opacity: 0 },
+          { y: '0%', rotateX: 0, z: 0, opacity: 1, duration: 1.2, stagger: 0.18, ease: 'power3.out' },
+          0.2
         )
         .fromTo(
-          '.editorial-divider',
-          { scaleX: 0.15 },
-          { scaleX: 1, transformOrigin: 'left center', ease: 'power2.out' },
-          0.18
+          '.architecture-section .editorial-divider',
+          { scaleX: 0, opacity: 0 },
+          { scaleX: 1, opacity: 1, duration: 0.85, ease: 'expo.out' },
+          0.45
+        )
+        .fromTo(
+          '.architecture-narrative-prose, .architecture-narrative-subprose',
+          { opacity: 0, y: 20, filter: 'blur(3px)' },
+          { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.9, stagger: 0.14, ease: 'power2.out' },
+          0.52
+        )
+        .fromTo(
+          '.architecture-section .editorial-meta-item',
+          { opacity: 0, y: 12 },
+          { opacity: 1, y: 0, duration: 0.65, stagger: 0.08, ease: 'power2.out' },
+          0.68
         )
         .fromTo(
           '.architecture-interface',
-          { opacity: 0.15, y: 28 },
-          { opacity: 1, y: 0, ease: 'power2.out' },
-          0.22
+          { opacity: 0, y: 24 },
+          { opacity: 1, y: 0, duration: 0.85, ease: 'power2.out' },
+          0.78
         );
 
-      // 6. SPATIAL ARCHITECTURE dissolves slightly as user descends to CODA
-      gsap.to('.architecture-interface', {
-        opacity: 0.12,
-        y: -32,
-        scale: 0.98,
-        ease: 'power2.out',
+      // Multi-layered editorial parallax between ARCHITECTURE & ARTIFACTS
+      gsap.to('#architecture-title', {
+        y: -28,
+        opacity: 0.2,
+        ease: 'none',
         scrollTrigger: {
-          trigger: '#coda',
+          trigger: '#artifacts',
           start: 'top bottom',
-          end: 'top 30%',
-          scrub: 1,
+          end: 'top 20%',
+          scrub: 1.2,
+        },
+      });
+      gsap.to('.architecture-narrative-block, .architecture-interface', {
+        y: -50,
+        opacity: 0.1,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '#artifacts',
+          start: 'top bottom',
+          end: 'top 20%',
+          scrub: 1.2,
         },
       });
 
-      // 7. CODA entrance with deliberate, restrained reveal
+      // ========================================================================
+      // 4. ARTIFACTS (Section 04) — Triggered on viewport entrance
+      // Heading emergence from depth, horizontal divider sweep, prose & controls
+      // ========================================================================
+      const artifactsTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: '#artifacts',
+          start: 'top 75%',
+          toggleActions: 'play none none none',
+          once: true,
+        },
+        defaults: { ease: 'power2.out' },
+      });
+
+      artifactsTl
+        .fromTo(
+          '.artifacts-pretitle__indicator',
+          { scaleX: 0, opacity: 0 },
+          { scaleX: 1, opacity: 1, duration: 0.75, ease: 'expo.out' },
+          0
+        )
+        .fromTo(
+          '.artifacts-pretitle span:last-child',
+          { opacity: 0, x: -8, letterSpacing: '0.22em' },
+          { opacity: 1, x: 0, letterSpacing: '0.15em', duration: 0.7, ease: 'power2.out' },
+          0.1
+        )
+        .fromTo(
+          '#artifacts-title .title-reveal-word',
+          { y: '115%', rotateX: -24, z: -35, opacity: 0 },
+          { y: '0%', rotateX: 0, z: 0, opacity: 1, duration: 1.2, stagger: 0.18, ease: 'power3.out' },
+          0.2
+        )
+        .fromTo(
+          '.artifacts-divider',
+          { scaleX: 0, opacity: 0 },
+          { scaleX: 1, opacity: 1, duration: 0.85, ease: 'expo.out' },
+          0.45
+        )
+        .fromTo(
+          '.artifacts-narrative-prose, .artifacts-narrative-subprose',
+          { opacity: 0, y: 20, filter: 'blur(3px)' },
+          { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.9, stagger: 0.14, ease: 'power2.out' },
+          0.52
+        )
+        .fromTo(
+          '.artifacts-section .editorial-meta-item',
+          { opacity: 0, y: 12 },
+          { opacity: 1, y: 0, duration: 0.65, stagger: 0.08, ease: 'power2.out' },
+          0.68
+        )
+        .fromTo(
+          '.artifacts-interface',
+          { opacity: 0, y: 24 },
+          { opacity: 1, y: 0, duration: 0.85, ease: 'power2.out' },
+          0.78
+        );
+
+      // Multi-layered editorial parallax between ARTIFACTS & RESONANCE
+      gsap.to('#artifacts-title', {
+        y: -28,
+        opacity: 0.2,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '#resonance',
+          start: 'top bottom',
+          end: 'top 20%',
+          scrub: 1.2,
+        },
+      });
+      gsap.to('.artifacts-narrative-block, .artifacts-interface', {
+        y: -50,
+        opacity: 0.1,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '#resonance',
+          start: 'top bottom',
+          end: 'top 20%',
+          scrub: 1.2,
+        },
+      });
+
+      // ========================================================================
+      // 5. RESONANCE (Section 05) — Triggered on viewport entrance
+      // Heading emergence from depth, horizontal divider sweep, prose & HUD
+      // ========================================================================
+      const resonanceTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: '#resonance',
+          start: 'top 75%',
+          toggleActions: 'play none none none',
+          once: true,
+        },
+        defaults: { ease: 'power2.out' },
+      });
+
+      resonanceTl
+        .fromTo(
+          '.resonance-pretitle__indicator',
+          { scaleX: 0, opacity: 0 },
+          { scaleX: 1, opacity: 1, duration: 0.75, ease: 'expo.out' },
+          0
+        )
+        .fromTo(
+          '.resonance-pretitle span:last-child',
+          { opacity: 0, x: -8, letterSpacing: '0.22em' },
+          { opacity: 1, x: 0, letterSpacing: '0.15em', duration: 0.7, ease: 'power2.out' },
+          0.1
+        )
+        .fromTo(
+          '#resonance-title .title-reveal-word',
+          { y: '115%', rotateX: -24, z: -35, opacity: 0 },
+          { y: '0%', rotateX: 0, z: 0, opacity: 1, duration: 1.2, ease: 'power3.out' },
+          0.2
+        )
+        .fromTo(
+          '.resonance-divider',
+          { scaleX: 0, opacity: 0 },
+          { scaleX: 1, opacity: 1, duration: 0.85, ease: 'expo.out' },
+          0.45
+        )
+        .fromTo(
+          '.resonance-narrative-prose',
+          { opacity: 0, y: 20, filter: 'blur(3px)' },
+          { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.9, ease: 'power2.out' },
+          0.52
+        )
+        .fromTo(
+          '.resonance-section .editorial-meta-item',
+          { opacity: 0, y: 12 },
+          { opacity: 1, y: 0, duration: 0.65, stagger: 0.08, ease: 'power2.out' },
+          0.68
+        )
+        .fromTo(
+          '.resonance-hud',
+          { opacity: 0, y: 24 },
+          { opacity: 1, y: 0, duration: 0.85, ease: 'power2.out' },
+          0.78
+        );
+
+      // Multi-layered editorial parallax between RESONANCE & CODA
+      gsap.to('#resonance-title', {
+        y: -28,
+        opacity: 0.2,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '#coda',
+          start: 'top bottom',
+          end: 'top 20%',
+          scrub: 1.2,
+        },
+      });
+      gsap.to('.resonance-narrative-block, .resonance-hud', {
+        y: -50,
+        opacity: 0.1,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '#coda',
+          start: 'top bottom',
+          end: 'top 20%',
+          scrub: 1.2,
+        },
+      });
+
+      // ========================================================================
+      // 6. CODA (Section 06) — The Quiet, Deliberate Arrival
+      // Stately heading emergence, pristine statement clarity, serene resolution
+      // ========================================================================
       const codaTl = gsap.timeline({
         scrollTrigger: {
           trigger: '#coda',
-          start: 'top 85%',
-          end: 'top 35%',
-          scrub: 1,
+          start: 'top 75%',
+          toggleActions: 'play none none none',
+          once: true,
         },
+        defaults: { ease: 'power2.out' },
       });
 
       codaTl
         .fromTo(
-          '.coda-pretitle',
-          { opacity: 0.15, y: 24 },
-          { opacity: 1, y: 0, ease: 'power2.out' },
+          '.coda-pretitle__indicator',
+          { scaleX: 0, opacity: 0 },
+          { scaleX: 1, opacity: 1, duration: 0.9, ease: 'expo.out' },
           0
         )
         .fromTo(
-          '.coda-title .title-reveal-word',
-          { y: '100%', opacity: 0.1 },
-          { y: '0%', opacity: 1, stagger: 0.1, ease: 'power3.out' },
-          0.05
+          '.coda-pretitle span:last-child',
+          { opacity: 0, x: -10, letterSpacing: '0.24em' },
+          { opacity: 1, x: 0, letterSpacing: '0.15em', duration: 0.8, ease: 'power2.out' },
+          0.15
+        )
+        .fromTo(
+          '#coda-title .title-reveal-word',
+          { y: '120%', rotateX: -26, z: -40, opacity: 0 },
+          { y: '0%', rotateX: 0, z: 0, opacity: 1, duration: 1.35, stagger: 0.22, ease: 'power3.out' },
+          0.28
         )
         .fromTo(
           '.coda-statement',
-          { opacity: 0.1, y: 24, scale: 0.98 },
-          { opacity: 1, y: 0, scale: 1, ease: 'power2.out' },
-          0.12
+          { opacity: 0, y: 24, filter: 'blur(3px)' },
+          { opacity: 1, y: 0, filter: 'blur(0px)', duration: 1.05, ease: 'power2.out' },
+          0.65
         )
         .fromTo(
           '.coda-divider',
-          { scaleX: 0.15 },
-          { scaleX: 1, transformOrigin: 'center center', ease: 'power2.out' },
-          0.18
+          { scaleX: 0, opacity: 0 },
+          { scaleX: 1, opacity: 1, duration: 0.95, ease: 'expo.out', transformOrigin: 'center center' },
+          0.82
+        )
+        .fromTo(
+          '.coda-meta-row .coda-meta-item',
+          { opacity: 0, y: 12 },
+          { opacity: 1, y: 0, duration: 0.7, stagger: 0.1, ease: 'power2.out' },
+          0.95
         )
         .fromTo(
           '.coda-actions',
-          { opacity: 0.15, y: 20 },
-          { opacity: 1, y: 0, ease: 'power2.out' },
-          0.22
+          { opacity: 0, y: 20 },
+          { opacity: 1, y: 0, duration: 0.85, ease: 'power2.out' },
+          1.10
         );
     },
     { scope: containerRef }
@@ -250,6 +604,13 @@ export const App: React.FC = () => {
         onSelectArchitecture={handleSelectArchitecture}
         hoveredArchitectureId={hoveredArchitectureId}
         onHoverArchitecture={setHoveredArchitectureId}
+        activeArtifactId={activeArtifactId}
+        onSelectArtifact={handleSelectArtifact}
+        hoveredArtifactId={hoveredArtifactId}
+        onHoverArtifact={setHoveredArtifactId}
+        artifactTriggerTimestamp={artifactTriggerTimestamp}
+        resonanceTriggerTimestamp={resonanceTriggerTimestamp}
+        onTriggerResonance={handleTriggerResonance}
       />
 
       {/* Editorial Page Container */}
@@ -269,6 +630,12 @@ export const App: React.FC = () => {
             </a>
             <a href="#architecture" className="nav-link">
               FORMS
+            </a>
+            <a href="#artifacts" className="nav-link">
+              ARTIFACTS
+            </a>
+            <a href="#resonance" className="nav-link">
+              RESONANCE
             </a>
           </nav>
 
@@ -318,6 +685,8 @@ export const App: React.FC = () => {
               <h1 id="hero-title" className="hero-title" aria-label="AFTERIMAGE">
                 <span className="title-reveal-line" aria-hidden="true">
                   <span className="title-reveal-word">AFTER</span>
+                </span>
+                <span className="title-reveal-line" aria-hidden="true">
                   <span className="title-reveal-word">IMAGE</span>
                 </span>
               </h1>
@@ -551,7 +920,260 @@ export const App: React.FC = () => {
             </div>
           </section>
 
-          {/* Section 4: CODA — The Deliberate Ending */}
+          {/* Section 4: ARTIFACTS — Floating Abstract Forms */}
+          <section
+            className="section-panel artifacts-section"
+            id="artifacts"
+            aria-labelledby="artifacts-title"
+          >
+            <div className="artifacts-header">
+              <p className="artifacts-pretitle">
+                <span className="artifacts-pretitle__indicator" aria-hidden="true" />
+                <span>04 // THREE ARTIFACTS</span>
+              </p>
+
+              <h2 id="artifacts-title" className="artifacts-title" aria-label="KINETIC FORMS">
+                <span className="title-reveal-line" aria-hidden="true">
+                  <span className="title-reveal-word">KINETIC</span>
+                </span>
+                <span className="title-reveal-line" aria-hidden="true">
+                  <span className="title-reveal-word">FORMS</span>
+                </span>
+              </h2>
+
+              <div className="artifacts-narrative-block">
+                <div className="editorial-meta-row">
+                  <span className="editorial-meta-item">STUDY 04</span>
+                  <span className="editorial-meta-divider" aria-hidden="true">·</span>
+                  <span className="editorial-meta-item">SURFACE REFRACTION</span>
+                  <span className="editorial-meta-divider" aria-hidden="true">·</span>
+                  <span className="editorial-meta-item">KINETIC RESPONSE</span>
+                </div>
+
+                <div className="artifacts-divider" aria-hidden="true" />
+
+                <p className="artifacts-narrative-prose">
+                  Between physical sculpture and digital code sit these three studies in surface and light.
+                  Each responds to contact differently: one ripples like thin glass, one shivers like liquid metal,
+                  and one fractures into light.
+                </p>
+
+                <p className="artifacts-narrative-subprose">
+                  Hover to illuminate edges and tilt in perspective. Click any object in 3D space to trigger its distinctive impulse wave.
+                </p>
+              </div>
+            </div>
+
+            <div className="artifacts-interface">
+              {/* Accessible Keyboard-Operable Tab Navigation */}
+              <div
+                className="artifacts-nav"
+                role="tablist"
+                aria-label="Select abstract artifact"
+              >
+                {(['glass', 'chrome', 'crystal'] as const).map((id, index) => {
+                  const item = ARTIFACTS_DATA[id];
+                  const isSelected = activeArtifactId === id;
+                  const isHovered = hoveredArtifactId === id;
+                  return (
+                    <button
+                      key={id}
+                      id={`artifact-tab-${id}`}
+                      role="tab"
+                      type="button"
+                      aria-selected={isSelected}
+                      aria-controls={`artifact-panel-${id}`}
+                      tabIndex={isSelected ? 0 : -1}
+                      className={`artifacts-tab ${isSelected ? 'is-selected' : ''} ${
+                        isHovered ? 'is-hovered' : ''
+                      }`}
+                      onClick={() => handleSelectArtifact(id)}
+                      onMouseEnter={() => setHoveredArtifactId(id)}
+                      onMouseLeave={() => setHoveredArtifactId(null)}
+                      onFocus={() => setHoveredArtifactId(id)}
+                      onBlur={() => setHoveredArtifactId(null)}
+                      onKeyDown={(e) => {
+                        const tabs: ArtifactId[] = ['glass', 'chrome', 'crystal'];
+                        let newIdx = -1;
+                        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                          e.preventDefault();
+                          newIdx = (index + 1) % tabs.length;
+                        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                          e.preventDefault();
+                          newIdx = (index - 1 + tabs.length) % tabs.length;
+                        } else if (e.key === 'Home') {
+                          e.preventDefault();
+                          newIdx = 0;
+                        } else if (e.key === 'End') {
+                          e.preventDefault();
+                          newIdx = tabs.length - 1;
+                        }
+                        if (newIdx !== -1) {
+                          const nextId = tabs[newIdx];
+                          handleSelectArtifact(nextId);
+                          document.getElementById(`artifact-tab-${nextId}`)?.focus();
+                        }
+                      }}
+                    >
+                      <span className="artifacts-tab__index">0{index + 1}</span>
+                      <span className="artifacts-tab__label">{item.title}</span>
+                      <span
+                        className="artifacts-tab__accent"
+                        style={{ backgroundColor: item.accentColor }}
+                        aria-hidden="true"
+                      />
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Active Editorial Detail Panel */}
+              {(() => {
+                const activeData = ARTIFACTS_DATA[activeArtifactId];
+                return (
+                  <div
+                    key={activeArtifactId}
+                    id={`artifact-panel-${activeArtifactId}`}
+                    role="tabpanel"
+                    aria-labelledby={`artifact-tab-${activeArtifactId}`}
+                    className="artifacts-panel"
+                  >
+                    <div className="artifacts-panel__top">
+                      <span className="artifacts-panel__phase">
+                        {activeData.phase}
+                      </span>
+                      <span className="artifacts-panel__subtitle">
+                        {activeData.subtitle}
+                      </span>
+                    </div>
+
+                    <h3 className="artifacts-panel__title">
+                      {activeData.title}
+                    </h3>
+
+                    <p className="artifacts-panel__description">
+                      {activeData.description}
+                    </p>
+
+                    <div className="artifacts-panel__metrics">
+                      <div className="metric-box">
+                        <span className="metric-box__label">Material</span>
+                        <span className="metric-box__value">{activeData.material}</span>
+                      </div>
+                      <div className="metric-box">
+                        <span className="metric-box__label">Response</span>
+                        <span className="metric-box__value">{activeData.behavior}</span>
+                      </div>
+                      <div className="metric-box">
+                        <span className="metric-box__label">Controls</span>
+                        <span className="metric-box__value">Click in 3D space or press Trigger</span>
+                      </div>
+                    </div>
+
+                    <div className="artifacts-panel__action">
+                      <button
+                        type="button"
+                        className="artifacts-trigger-btn"
+                        onClick={handleTriggerActiveArtifact}
+                        aria-label={`Trigger kinetic response for ${activeData.title}`}
+                      >
+                        <span className="artifacts-trigger-btn__dot" aria-hidden="true" />
+                        <span>TRIGGER KINETIC IMPULSE</span>
+                      </button>
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+          </section>
+
+          {/* Section 5: RESONANCE (Sculptural Glass-Distortion Installation) */}
+          <section
+            className="section-panel resonance-section"
+            id="resonance"
+            aria-labelledby="resonance-title"
+          >
+            <div className="resonance-content">
+              <div className="resonance-header">
+                <p className="resonance-pretitle">
+                  <span className="resonance-pretitle__indicator" aria-hidden="true" />
+                  <span>05 // OPTICAL RESONANCE</span>
+                </p>
+
+                <h2 id="resonance-title" className="resonance-title" aria-label="RESONANCE">
+                  <span className="title-reveal-line" aria-hidden="true">
+                    <span className="title-reveal-word">RESONANCE</span>
+                  </span>
+                </h2>
+
+                <div className="resonance-narrative-block">
+                  <div className="editorial-meta-row">
+                    <span className="editorial-meta-item">STUDY 05</span>
+                    <span className="editorial-meta-divider" aria-hidden="true">·</span>
+                    <span className="editorial-meta-item">CAST OBSIDIAN</span>
+                    <span className="editorial-meta-divider" aria-hidden="true">·</span>
+                    <span className="editorial-meta-item">REFRACTIVE MEMBRANE</span>
+                  </div>
+
+                  <div className="resonance-divider" aria-hidden="true" />
+
+                  <p className="resonance-narrative-prose">
+                    Suspended behind a curved acoustic lens sits a monolithic obsidian figure.
+                    As your gaze moves across the glass, optical refraction bends light and parts the surface atmosphere,
+                    revealing the sculpture beneath.
+                  </p>
+                </div>
+              </div>
+
+              {/* Accessible Interactive HUD Overlay */}
+              <div className="resonance-hud">
+                <div className="resonance-hud__status-box">
+                  <span className="resonance-hud__label">Lens State</span>
+                  <div className="resonance-status-pill">
+                    <span
+                      className={`resonance-status-pill__dot is-${resonanceState}`}
+                      aria-hidden="true"
+                    />
+                    <span className="resonance-status-pill__text">
+                      {resonanceState.toUpperCase()}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="resonance-hud__metrics">
+                  <div className="metric-box">
+                    <span className="metric-box__label">Medium</span>
+                    <span className="metric-box__value">Cast Obsidian · Glass Lens</span>
+                  </div>
+                  <div className="metric-box">
+                    <span className="metric-box__label">Optics</span>
+                    <span className="metric-box__value">Dynamic Pointer Refraction</span>
+                  </div>
+                  <div className="metric-box">
+                    <span className="metric-box__label">Response</span>
+                    <span className="metric-box__value">Localized Surface Clearing</span>
+                  </div>
+                </div>
+
+                <div className="resonance-hud__action">
+                  <button
+                    type="button"
+                    className="resonance-trigger-btn"
+                    onClick={handleTriggerResonance}
+                    aria-label="Trigger refractive pulse wave through the glass lens"
+                  >
+                    <span className="resonance-trigger-btn__dot" aria-hidden="true" />
+                    <span>TRIGGER REFRACTIVE PULSE</span>
+                  </button>
+                  <span className="resonance-hud__hint">
+                    Pointer deflection active · Click glass to send refractive wave
+                  </span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Section 6: CODA — The Deliberate Ending */}
           <section
             className="section-panel coda-section"
             id="coda"
@@ -560,7 +1182,7 @@ export const App: React.FC = () => {
             <div className="coda-content">
               <p className="coda-pretitle">
                 <span className="coda-pretitle__indicator" aria-hidden="true" />
-                <span>04 // CLOSING</span>
+                <span>06 // CLOSING</span>
               </p>
 
               <h2 id="coda-title" className="coda-title" aria-label="WHAT PERSISTS">
