@@ -532,15 +532,20 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
       scrollTrigger: {
         trigger: '#afterimage',
         start: 'top bottom',
-        end: 'top 20%',
+        end: 'top 40%',
         scrub: 1.2,
         invalidateOnRefresh: true,
       },
     });
 
-    tl.to(journeyProgress, { current: 1.0, ease: 'power2.inOut' }, 0)
-      .to(
+    tl.fromTo(journeyProgress, { current: 0.0 }, { current: 1.0, ease: 'power2.inOut' }, 0)
+      .fromTo(
         baseCameraPos.current,
+        {
+          x: 0,
+          y: 0,
+          z: 6.2,
+        },
         {
           x: isDesktop ? 0.38 : 0.15,
           y: -0.22,
@@ -550,8 +555,9 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
         },
         0
       )
-      .to(
+      .fromTo(
         baseCameraRot.current,
+        { z: 0 },
         {
           z: -0.022,
           duration: 0.48,
@@ -625,9 +631,14 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
       });
 
       archTl
-        .to(journeyProgress, { current: 2.0, ease: 'power2.inOut' }, 0)
-        .to(
+        .fromTo(journeyProgress, { current: 1.0 }, { current: 2.0, ease: 'power2.inOut' }, 0)
+        .fromTo(
           baseCameraPos.current,
+          {
+            x: isDesktop ? -0.32 : 0,
+            y: 0.08,
+            z: 5.6,
+          },
           {
             x: isDesktop ? 0.28 : 0.12,
             y: -0.14,
@@ -637,8 +648,9 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
           },
           0
         )
-        .to(
+        .fromTo(
           baseCameraRot.current,
+          { z: 0 },
           {
             z: 0.018,
             duration: 0.46,
@@ -730,9 +742,14 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
         });
 
         artifactsTl
-          .to(journeyProgress, { current: 3.0, ease: 'power2.inOut' }, 0)
-          .to(
+          .fromTo(journeyProgress, { current: 2.0 }, { current: 3.0, ease: 'power2.inOut' }, 0)
+          .fromTo(
             baseCameraPos.current,
+            {
+              x: 0,
+              y: 0,
+              z: 6.25,
+            },
             {
               x: isDesktop ? -0.3 : -0.1,
               y: 0.12,
@@ -742,8 +759,9 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
             },
             0
           )
-          .to(
+          .fromTo(
             baseCameraRot.current,
+            { z: 0 },
             {
               z: -0.016,
               duration: 0.48,
@@ -845,9 +863,14 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
           });
 
           resonanceTl
-            .to(journeyProgress, { current: 4.0, ease: 'power2.inOut' }, 0)
-            .to(
+            .fromTo(journeyProgress, { current: 3.0 }, { current: 4.0, ease: 'power2.inOut' }, 0)
+            .fromTo(
               baseCameraPos.current,
+              {
+                x: 0,
+                y: 0,
+                z: 6.0,
+              },
               {
                 x: isDesktop ? 0.24 : 0.08,
                 y: -0.12,
@@ -857,8 +880,9 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
               },
               0
             )
-            .to(
+            .fromTo(
               baseCameraRot.current,
+              { z: 0 },
               {
                 z: 0.015,
                 duration: 0.46,
@@ -940,9 +964,14 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
           });
 
           codaTl
-            .to(journeyProgress, { current: 5.0, ease: 'power2.inOut' }, 0)
-            .to(
+            .fromTo(journeyProgress, { current: 4.0 }, { current: 5.0, ease: 'power2.inOut' }, 0)
+            .fromTo(
               baseCameraPos.current,
+              {
+                x: 0,
+                y: -0.05,
+                z: 5.75,
+              },
               {
                 x: 0,
                 y: 0.06,
@@ -1035,15 +1064,13 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
     }
 
     // Cinematic 3D camera travel tracking with restrained pointer parallax
+    // Camera depth (Z) and roll (rotation.z) track the scroll-driven trajectory directly with zero lag.
+    // Optical pointer parallax is smoothly applied on X and Y via lightPointer.
     if (!prefersReduced) {
-      const targetCamX = baseCameraPos.current.x + px * 0.22;
-      const targetCamY = baseCameraPos.current.y + py * 0.16;
-      const targetCamZ = baseCameraPos.current.z;
-
-      state.camera.position.x = THREE.MathUtils.lerp(state.camera.position.x, targetCamX, 0.05);
-      state.camera.position.y = THREE.MathUtils.lerp(state.camera.position.y, targetCamY, 0.05);
-      state.camera.position.z = THREE.MathUtils.lerp(state.camera.position.z, targetCamZ, 0.05);
-      state.camera.rotation.z = THREE.MathUtils.lerp(state.camera.rotation.z, baseCameraRot.current.z, 0.05);
+      state.camera.position.x = baseCameraPos.current.x + px * 0.22;
+      state.camera.position.y = baseCameraPos.current.y + py * 0.16;
+      state.camera.position.z = baseCameraPos.current.z;
+      state.camera.rotation.z = baseCameraRot.current.z;
     } else {
       state.camera.position.set(baseCameraPos.current.x, baseCameraPos.current.y, baseCameraPos.current.z);
       state.camera.rotation.z = 0;

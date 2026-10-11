@@ -197,7 +197,6 @@ export const App: React.FC = () => {
         y: -36,
         opacity: 0.12,
         scale: 0.97,
-        filter: 'blur(3px)',
         ease: 'none',
         scrollTrigger: {
           trigger: '#afterimage',
@@ -209,7 +208,6 @@ export const App: React.FC = () => {
       gsap.to('.hero-description, .hero-details, .scroll-indicator', {
         y: -65,
         opacity: 0.06,
-        filter: 'blur(2px)',
         ease: 'none',
         scrollTrigger: {
           trigger: '#afterimage',
