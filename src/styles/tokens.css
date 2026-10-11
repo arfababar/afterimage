@@ -1,20 +1,22 @@
 :root {
-  /* Color Palette */
-  --color-bg: #17151B;
-  --color-bg-elevated: #1F1C25;
-  --color-bg-subtle: #24202B;
+  /* Color Palette - Rose Noir 2.0 Luminous System */
+  --color-bg: #241B24;
+  --color-bg-elevated: #342633;
+  --color-bg-subtle: #463445;
 
-  --color-text-primary: #E9E1D6;
-  --color-text-secondary: #A69F96;
-  --color-text-muted: #6B6560;
+  --color-text-primary: #F0E0E4;
+  --color-text-secondary: #D0BDC9;
+  --color-text-muted: #9E8294;
 
-  --color-accent-violet: #C6A6FF;
-  --color-accent-violet-glow: rgba(198, 166, 255, 0.18);
-  --color-accent-ember: #E5A66D;
-  --color-accent-ember-glow: rgba(229, 166, 109, 0.15);
+  --color-accent-violet: #C49AAE;
+  --color-accent-violet-glow: rgba(196, 154, 174, 0.32);
+  --color-accent-ember: #E8CDAF;
+  --color-accent-ember-glow: rgba(232, 205, 175, 0.22);
+  --color-accent-rose-amber: #C98570;
+  --color-accent-rose-amber-glow: rgba(201, 133, 112, 0.24);
 
-  --color-border-subtle: rgba(233, 225, 214, 0.08);
-  --color-border-hover: rgba(198, 166, 255, 0.3);
+  --color-border-subtle: rgba(240, 224, 228, 0.12);
+  --color-border-hover: rgba(196, 154, 174, 0.42);
 
   /* Typography */
   --font-serif: "Cinzel", "Didot", "Bodoni MT", "Times New Roman", Georgia, serif;

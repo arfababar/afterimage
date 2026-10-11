@@ -180,8 +180,8 @@ export const HeroArtifact: React.FC = () => {
   const haloMaterial = useMemo(() => {
     return new THREE.ShaderMaterial({
       uniforms: {
-        uColorViolet: { value: new THREE.Color('#C6A6FF') },
-        uColorEmber: { value: new THREE.Color('#E5A66D') },
+        uColorViolet: { value: new THREE.Color('#C49AAE') },
+        uColorEmber: { value: new THREE.Color('#E8CDAF') },
         uIntensity: { value: 1.0 },
       },
       vertexShader: `
@@ -210,8 +210,8 @@ export const HeroArtifact: React.FC = () => {
           float blend = smoothstep(0.12, 0.85, dist);
           vec3 haloColor = mix(uColorViolet, uColorEmber, blend);
 
-          // Restrained backlight opacity (~0.16 max) to separate silhouette without washout
-          float alpha = halo * 0.16 * uIntensity;
+          // Luminous dusty rose backlight opacity (~0.26 max) to separate silhouette with warmth
+          float alpha = halo * 0.26 * uIntensity;
           gl_FragColor = vec4(haloColor, alpha);
         }
       `,
@@ -229,9 +229,10 @@ export const HeroArtifact: React.FC = () => {
     const seeds = new Float32Array(count * 3);
     const colors = new Float32Array(count * 3);
 
-    const violetColor = new THREE.Color('#C6A6FF');
-    const emberColor = new THREE.Color('#E5A66D');
-    const porcelainColor = new THREE.Color('#E9E1D6');
+    const dustyRoseColor = new THREE.Color('#C49AAE');
+    const champagneGlowColor = new THREE.Color('#E8CDAF');
+    const roseAmberColor = new THREE.Color('#C98570');
+    const champagneIvoryColor = new THREE.Color('#F0E0E4');
 
     for (let i = 0; i < count; i++) {
       const theta = Math.random() * Math.PI * 2;
@@ -250,15 +251,15 @@ export const HeroArtifact: React.FC = () => {
       seeds[i * 3 + 1] = 0.7 + Math.random() * 0.6;
       seeds[i * 3 + 2] = Math.random();
 
-      // Color distribution: blend between spectral violet, ember, and warm porcelain
+      // Color distribution: blend between dusty rose, champagne glow, rose amber, and champagne ivory
       const pick = Math.random();
       let pointColor: THREE.Color;
-      if (pick < 0.55) {
-        pointColor = violetColor.clone().lerp(emberColor, Math.random() * 0.4);
-      } else if (pick < 0.88) {
-        pointColor = emberColor.clone().lerp(violetColor, Math.random() * 0.35);
+      if (pick < 0.45) {
+        pointColor = dustyRoseColor.clone().lerp(champagneGlowColor, Math.random() * 0.4);
+      } else if (pick < 0.80) {
+        pointColor = champagneGlowColor.clone().lerp(roseAmberColor, Math.random() * 0.45);
       } else {
-        pointColor = porcelainColor.clone().lerp(violetColor, 0.25);
+        pointColor = champagneIvoryColor.clone().lerp(dustyRoseColor, 0.25);
       }
 
       colors[i * 3] = pointColor.r;
@@ -355,7 +356,7 @@ export const HeroArtifact: React.FC = () => {
   // Translucent obsidian physical material with surface motion, physical iridescence, and localized cursor-following glow
   const coreMaterial = useMemo(() => {
     const mat = new THREE.MeshPhysicalMaterial({
-      color: new THREE.Color('#16121E'),
+      color: new THREE.Color('#2C1E2A'),
       roughness: 0.16,
       metalness: 0.14,
       transmission: 0.72,
@@ -367,9 +368,9 @@ export const HeroArtifact: React.FC = () => {
       iridescence: 0.85,
       iridescenceIOR: 1.32,
       iridescenceThicknessRange: [120, 380],
-      attenuationColor: new THREE.Color('#E5A66D'),
+      attenuationColor: new THREE.Color('#C49AAE'),
       attenuationDistance: 2.2,
-      specularColor: new THREE.Color('#C6A6FF'),
+      specularColor: new THREE.Color('#F0E0E4'),
       specularIntensity: 0.95,
       transparent: true,
     });
@@ -459,16 +460,16 @@ export const HeroArtifact: React.FC = () => {
         if (uHitIntensity > 0.005) {
           float hitDist = length(vWorldPos - uHitPoint);
           // Tight, compact radial falloff (confined strictly within ~0.25 radius)
-          float violetHalo = smoothstep(0.25, 0.0, hitDist);
-          // Subtle, delicate porcelain core strictly at the tiny contact glint point (< 0.07 radius)
-          float porcelainCore = smoothstep(0.07, 0.0, hitDist);
+          float roseHalo = smoothstep(0.25, 0.0, hitDist);
+          // Subtle, delicate champagne core strictly at the tiny contact glint point (< 0.07 radius)
+          float champagneCore = smoothstep(0.07, 0.0, hitDist);
 
-          vec3 spectralViolet = vec3(0.776, 0.651, 1.0); // #C6A6FF
-          vec3 porcelainWhite = vec3(0.94, 0.91, 0.86); // #E9E1D6
+          vec3 dustyRose = vec3(0.769, 0.604, 0.682); // #C49AAE
+          vec3 champagneIvory = vec3(0.941, 0.878, 0.894); // #F0E0E4
 
-          // Primary spectral violet glint with only a subtle porcelain-white center
-          vec3 glintColor = mix(spectralViolet * 0.7, porcelainWhite * 0.85, porcelainCore * 0.35);
-          float glintStrength = (violetHalo * 0.45 + porcelainCore * 0.25) * uHitIntensity;
+          // Primary dusty rose glint with champagne ivory center
+          vec3 glintColor = mix(dustyRose * 0.75, champagneIvory * 0.9, champagneCore * 0.35);
+          float glintStrength = (roseHalo * 0.45 + champagneCore * 0.25) * uHitIntensity;
 
           totalEmissiveRadiance += glintColor * glintStrength;
         }
@@ -654,10 +655,10 @@ export const HeroArtifact: React.FC = () => {
         </ModelErrorBoundary>
       </group>
 
-      {/* Localized Cursor Surface Glow Point Light (spectral violet, compact micro-facet radius) */}
+      {/* Localized Cursor Surface Glow Point Light (dusty rose, compact micro-facet radius) */}
       <pointLight
         ref={glowLightRef}
-        color="#C6A6FF"
+        color="#C49AAE"
         distance={0.75}
         decay={2}
         intensity={0}
@@ -666,8 +667,8 @@ export const HeroArtifact: React.FC = () => {
       {/* Internal Concentric Echo / Dark Latent Core */}
       <mesh ref={innerRef} geometry={innerGeometry} raycast={() => null}>
         <meshStandardMaterial
-          color="#16121C"
-          emissive="#2E1B4E"
+          color="#2A1D28"
+          emissive="#4A3445"
           emissiveIntensity={0.4}
           roughness={0.45}
           metalness={0.85}
@@ -677,7 +678,7 @@ export const HeroArtifact: React.FC = () => {
       {/* Tilted Latent Orbital Ring */}
       <mesh ref={ringRef} geometry={ringGeometry} rotation={[0.55, 0.2, 0]} raycast={() => null}>
         <meshStandardMaterial
-          color="#C6A6FF"
+          color="#E8CDAF"
           roughness={0.3}
           metalness={0.9}
           transparent={true}

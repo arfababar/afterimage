@@ -195,7 +195,7 @@ export const App: React.FC = () => {
           trigger: '#genesis',
           start: 'top 80px',
           end: '40% top',
-          scrub: 1.2,
+          scrub: 0.45,
         },
       });
 
@@ -260,7 +260,7 @@ export const App: React.FC = () => {
           trigger: '#afterimage',
           start: 'top bottom',
           end: 'top 20%',
-          scrub: 1.2,
+          scrub: 0.45,
         },
       });
       gsap.to('.hero-description, .hero-details, .hero-section .scroll-indicator', {
@@ -271,79 +271,101 @@ export const App: React.FC = () => {
           trigger: '#afterimage',
           start: 'top bottom',
           end: 'top 20%',
-          scrub: 1.2,
+          scrub: 0.45,
         },
       });
 
       // ========================================================================
-      // 2. AFTERIMAGE (Section 02) — Triggered on viewport entrance
-      // Line-by-line heading reveal from depth, delayed labels, upward prose
+      // 2. AFTERIMAGE (Section 03) — Cinematic Scroll-Driven Typography Sequence
+      // Scrubbed multidirectional glide: large editorial text ribbons traverse
+      // the viewport, revealing, converging around the 3D sculpture, and separating.
       // ========================================================================
-      const afterimageTl = gsap.timeline({
+      const typoTl = gsap.timeline({
         scrollTrigger: {
           trigger: '#afterimage',
-          start: 'top 75%',
-          toggleActions: 'play none none none',
-          once: true,
+          start: 'top 80px',
+          end: 'bottom bottom',
+          scrub: 0.6,
+          invalidateOnRefresh: true,
         },
-        defaults: { ease: 'power2.out' },
+        defaults: { ease: 'none' },
       });
 
-      afterimageTl
+      // Track 1 (Top): "AFTER THE LIGHT" — Glides from right across to left
+      typoTl
         .fromTo(
-          '.afterimage-pretitle__indicator',
-          { scaleX: 0, opacity: 0 },
-          { scaleX: 1, opacity: 1, duration: 0.75, ease: 'expo.out' },
+          '.cinema-typo-track--top',
+          { x: '18vw', y: '0vh', opacity: 0, scale: 0.95 },
+          { x: '0vw', y: '1vh', opacity: 0.95, scale: 1.0, duration: 0.45 },
           0
         )
-        .fromTo(
-          '.afterimage-pretitle span:last-child',
-          { opacity: 0, x: -8, letterSpacing: '0.22em' },
-          { opacity: 1, x: 0, letterSpacing: '0.15em', duration: 0.7, ease: 'power2.out' },
-          0.1
+        .to(
+          '.cinema-typo-track--top',
+          { x: '-18vw', y: '2.5vh', opacity: 0.85, scale: 1.02, duration: 0.40 },
+          0.45
         )
-        .fromTo(
-          '#afterimage-title .title-reveal-word',
-          { y: '115%', rotateX: -24, z: -35, opacity: 0 },
-          { y: '0%', rotateX: 0, z: 0, opacity: 1, duration: 1.2, stagger: 0.18, ease: 'power3.out' },
-          0.2
-        )
-        .fromTo(
-          '.afterimage-description',
-          { opacity: 0, y: 22, filter: 'blur(3px)' },
-          { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.95, ease: 'power2.out' },
-          0.5
-        )
-        .fromTo(
-          '.afterimage-details .detail-item',
-          { opacity: 0, y: 16 },
-          { opacity: 1, y: 0, duration: 0.7, stagger: 0.1, ease: 'power2.out' },
-          0.68
+        .to(
+          '.cinema-typo-track--top',
+          { x: '-32vw', y: '4vh', opacity: 0.1, scale: 0.96, duration: 0.15 },
+          0.85
         );
 
-      // Multi-layered editorial parallax between AFTERIMAGE & ARCHITECTURE
-      gsap.to('#afterimage-title', {
-        y: -28,
-        opacity: 0.2,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: '#architecture',
-          start: 'top bottom',
-          end: 'top 20%',
-          scrub: 1.2,
-        },
-      });
-      gsap.to('.afterimage-description, .afterimage-details', {
-        y: -55,
-        opacity: 0.1,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: '#architecture',
-          start: 'top bottom',
-          end: 'top 20%',
-          scrub: 1.2,
-        },
-      });
+      // Track 2 (Center): "SOME THINGS REMAIN" — Counter-glide from left across to right
+      typoTl
+        .fromTo(
+          '.cinema-typo-track--center',
+          { x: '-20vw', y: '3vh', opacity: 0, scale: 0.92 },
+          { x: '0vw', y: '0vh', opacity: 0.98, scale: 1.04, duration: 0.42 },
+          0.08
+        )
+        .to(
+          '.cinema-typo-track--center',
+          { x: '16vw', y: '-2vh', opacity: 0.88, scale: 1.01, duration: 0.35 },
+          0.50
+        )
+        .to(
+          '.cinema-typo-track--center',
+          { x: '30vw', y: '-4vh', opacity: 0.1, scale: 0.94, duration: 0.15 },
+          0.85
+        );
+
+      // Track 3 (Bottom): "WHAT WE LEAVE BEHIND" — Vertical float & horizontal drift
+      typoTl
+        .fromTo(
+          '.cinema-typo-track--bottom',
+          { x: '12vw', y: '5vh', opacity: 0 },
+          { x: '-4vw', y: '0vh', opacity: 0.88, duration: 0.42 },
+          0.18
+        )
+        .to(
+          '.cinema-typo-track--bottom',
+          { x: '-16vw', y: '-3vh', opacity: 0.65, duration: 0.28 },
+          0.60
+        )
+        .to(
+          '.cinema-typo-track--bottom',
+          { x: '-26vw', y: '-5vh', opacity: 0.1, duration: 0.12 },
+          0.88
+        );
+
+      // Docked Editorial Narrative Card: Emerges gracefully, remains anchored & readable, then gently recedes
+      typoTl
+        .fromTo(
+          '.afterimage-content',
+          { opacity: 0, y: 30, scale: 0.97 },
+          { opacity: 1, y: 0, scale: 1.0, duration: 0.25 },
+          0.05
+        )
+        .to(
+          '.afterimage-content',
+          { y: -14, duration: 0.50 },
+          0.30
+        )
+        .to(
+          '.afterimage-content',
+          { opacity: 0.15, y: -40, scale: 0.96, duration: 0.20 },
+          0.80
+        );
 
       // ========================================================================
       // 3. SPATIAL ARCHITECTURE (Section 03) — Triggered on viewport entrance
@@ -412,7 +434,7 @@ export const App: React.FC = () => {
           trigger: '#artifacts',
           start: 'top bottom',
           end: 'top 20%',
-          scrub: 1.2,
+          scrub: 0.45,
         },
       });
       gsap.to('.architecture-narrative-block, .architecture-interface', {
@@ -423,7 +445,7 @@ export const App: React.FC = () => {
           trigger: '#artifacts',
           start: 'top bottom',
           end: 'top 20%',
-          scrub: 1.2,
+          scrub: 0.45,
         },
       });
 
@@ -494,7 +516,7 @@ export const App: React.FC = () => {
           trigger: '#resonance',
           start: 'top bottom',
           end: 'top 20%',
-          scrub: 1.2,
+          scrub: 0.45,
         },
       });
       gsap.to('.artifacts-narrative-block, .artifacts-interface', {
@@ -505,7 +527,7 @@ export const App: React.FC = () => {
           trigger: '#resonance',
           start: 'top bottom',
           end: 'top 20%',
-          scrub: 1.2,
+          scrub: 0.45,
         },
       });
 
@@ -576,7 +598,7 @@ export const App: React.FC = () => {
           trigger: '#coda',
           start: 'top bottom',
           end: 'top 20%',
-          scrub: 1.2,
+          scrub: 0.45,
         },
       });
       gsap.to('.resonance-narrative-block, .resonance-hud', {
@@ -587,7 +609,7 @@ export const App: React.FC = () => {
           trigger: '#coda',
           start: 'top bottom',
           end: 'top 20%',
-          scrub: 1.2,
+          scrub: 0.45,
         },
       });
 
@@ -672,9 +694,9 @@ export const App: React.FC = () => {
         onTriggerResonance={handleTriggerResonance}
       />
 
-      {/* Editorial Page Container */}
-      <div ref={containerRef} className="page-container">
-        <header className="site-header">
+      {/* Top Header / Navigation (Full Viewport Width) */}
+      <header className="site-header">
+        <div className="site-header__inner">
           <a href="#genesis" className="site-wordmark" aria-label="AFTERIMAGE Home">
             <span className="site-wordmark__glyph" aria-hidden="true" />
             <span>AFTERIMAGE</span>
@@ -729,8 +751,11 @@ export const App: React.FC = () => {
 
             <span className="site-meta">STUDY 01</span>
           </div>
-        </header>
+        </div>
+      </header>
 
+      {/* Editorial Page Container */}
+      <div ref={containerRef} className="page-container">
         <main className="site-main" id="main-content">
           {/* Section 1: GENESIS / ORIGIN */}
           <section
@@ -818,45 +843,76 @@ export const App: React.FC = () => {
             </div>
           </section>
 
-          {/* Section 3: AFTERIMAGE */}
+          {/* Section 3: AFTERIMAGE — Cinematic Scroll-Driven Typography */}
           <section
             className="section-panel afterimage-section"
             id="afterimage"
             aria-labelledby="afterimage-title"
           >
-            <div className="afterimage-content">
-              <p className="afterimage-pretitle">
-                <span className="afterimage-pretitle__indicator" aria-hidden="true" />
-                <span>03 // RESIDUAL LIGHT</span>
-              </p>
-
-              <h2 id="afterimage-title" className="afterimage-title" aria-label="RESIDUAL LIGHT">
-                <span className="title-reveal-line" aria-hidden="true">
-                  <span className="title-reveal-word">RESIDUAL</span>
-                </span>
-                <span className="title-reveal-line" aria-hidden="true">
-                  <span className="title-reveal-word">LIGHT</span>
-                </span>
-              </h2>
-
-              <p className="afterimage-description">
-                The eye doesn't record light like a camera. It absorbs a flash and lets it fade
-                slowly, shifting colors as the optic nerve resets. What you see in the dark isn't
-                empty space—it's the shadow of what you just looked at.
-              </p>
-
-              <div className="afterimage-details">
-                <div className="detail-item">
-                  <span className="detail-item__label">Optics</span>
-                  <span className="detail-item__value">Spectral Dispersion</span>
+            <div className="afterimage-sticky-wrap">
+              {/* Cinematic Scroll-Driven Typography Stream (Non-blocking, pointer-events: none) */}
+              <div className="cinema-typography-container" aria-hidden="true">
+                {/* Track 1: Upper Gliding Stream (Right -> Left) */}
+                <div className="cinema-typo-track cinema-typo-track--top">
+                  <div className="cinema-typo-text cinema-typo-text--primary">
+                    <span className="cinema-typo-phrase">AFTER THE LIGHT</span>
+                    <span className="cinema-typo-separator">✦</span>
+                    <span className="cinema-typo-subphrase">// RETINAL RETENTION STUDY</span>
+                  </div>
                 </div>
-                <div className="detail-item">
-                  <span className="detail-item__label">Surface</span>
-                  <span className="detail-item__value">Thin-Film Iridescence</span>
+
+                {/* Track 2: Center Dramatic Stream (Counter-motion Left -> Right) */}
+                <div className="cinema-typo-track cinema-typo-track--center">
+                  <div className="cinema-typo-text cinema-typo-text--dramatic">
+                    <span className="cinema-typo-accent">SOME THINGS REMAIN</span>
+                  </div>
                 </div>
-                <div className="detail-item">
-                  <span className="detail-item__label">Behavior</span>
-                  <span className="detail-item__value">Cursor Glint</span>
+
+                {/* Track 3: Lower Counter Stream (Left/Upward drift) */}
+                <div className="cinema-typo-track cinema-typo-track--bottom">
+                  <div className="cinema-typo-text cinema-typo-text--secondary">
+                    <span className="cinema-typo-tag">PHASE 03</span>
+                    <span className="cinema-typo-separator">✦</span>
+                    <span className="cinema-typo-phrase">WHAT WE LEAVE BEHIND</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Accessible Editorial Narrative Card */}
+              <div className="afterimage-content">
+                <p className="afterimage-pretitle">
+                  <span className="afterimage-pretitle__indicator" aria-hidden="true" />
+                  <span>03 // RESIDUAL LIGHT</span>
+                </p>
+
+                <h2 id="afterimage-title" className="afterimage-title" aria-label="RESIDUAL LIGHT">
+                  <span className="title-reveal-line" aria-hidden="true">
+                    <span className="title-reveal-word">RESIDUAL</span>
+                  </span>
+                  <span className="title-reveal-line" aria-hidden="true">
+                    <span className="title-reveal-word">LIGHT</span>
+                  </span>
+                </h2>
+
+                <p className="afterimage-description">
+                  The eye doesn't record light like a camera. It absorbs a flash and lets it fade
+                  slowly, shifting colors as the optic nerve resets. What you see in the dark isn't
+                  empty space—it's the shadow of what you just looked at.
+                </p>
+
+                <div className="afterimage-details">
+                  <div className="detail-item">
+                    <span className="detail-item__label">Optics</span>
+                    <span className="detail-item__value">Spectral Dispersion</span>
+                  </div>
+                  <div className="detail-item">
+                    <span className="detail-item__label">Surface</span>
+                    <span className="detail-item__value">Thin-Film Iridescence</span>
+                  </div>
+                  <div className="detail-item">
+                    <span className="detail-item__label">Behavior</span>
+                    <span className="detail-item__value">Cursor Glint</span>
+                  </div>
                 </div>
               </div>
             </div>

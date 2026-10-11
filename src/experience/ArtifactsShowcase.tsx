@@ -25,7 +25,7 @@ export const ARTIFACTS_DATA: Record<ArtifactId, ArtifactItemData> = {
     behavior: 'Optical distortion wave on contact',
     description:
       'An intertwined Möbius loop sculpted from thin-film glass. When touched, it sends a ripple of refractive distortion through its curves, shifting colors across the spectrum.',
-    accentColor: '#C6A6FF',
+    accentColor: '#C49AAE',
   },
   chrome: {
     id: 'chrome',
@@ -36,7 +36,7 @@ export const ARTIFACTS_DATA: Record<ArtifactId, ArtifactItemData> = {
     behavior: 'Surface magneto-shockwave on contact',
     description:
       'A dense mercury droplet encircled by a free-floating liquid band. When touched, high-frequency ripples shiver across its mirror surface before dissipating into calm.',
-    accentColor: '#E9E1D6',
+    accentColor: '#F0E0E4',
   },
   crystal: {
     id: 'crystal',
@@ -47,7 +47,7 @@ export const ARTIFACTS_DATA: Record<ArtifactId, ArtifactItemData> = {
     behavior: 'Prismatic spark burst on contact',
     description:
       'A cluster of faceted geometric spires guarding a quiet internal flame. When touched, it releases a burst of glowing ember sparks that drift outward into the dark.',
-    accentColor: '#E5A66D',
+    accentColor: '#E8CDAF',
   },
 };
 
@@ -267,7 +267,7 @@ export const ArtifactsShowcase: React.FC<ArtifactsShowcaseProps> = ({
   const glassMaterial = useMemo(
     () =>
       new THREE.MeshPhysicalMaterial({
-        color: new THREE.Color('#F6EFFF'),
+        color: new THREE.Color('#F0E0E4'),
         roughness: 0.08,
         metalness: 0.12,
         transmission: 0.72,
@@ -275,7 +275,7 @@ export const ArtifactsShowcase: React.FC<ArtifactsShowcaseProps> = ({
         ior: 1.62,
         clearcoat: 1.0,
         clearcoatRoughness: 0.04,
-        attenuationColor: new THREE.Color('#C6A6FF'),
+        attenuationColor: new THREE.Color('#C49AAE'),
         attenuationDistance: 1.6,
       }),
     []
@@ -288,7 +288,7 @@ export const ArtifactsShowcase: React.FC<ArtifactsShowcaseProps> = ({
   const chromeMaterial = useMemo(
     () =>
       new THREE.MeshPhysicalMaterial({
-        color: new THREE.Color('#E8EDF2'),
+        color: new THREE.Color('#F2EBEF'),
         metalness: 0.98,
         roughness: 0.04,
         clearcoat: 1.0,
@@ -319,7 +319,7 @@ export const ArtifactsShowcase: React.FC<ArtifactsShowcaseProps> = ({
   const crystalMaterial = useMemo(
     () =>
       new THREE.MeshPhysicalMaterial({
-        color: new THREE.Color('#FBF8F5'),
+        color: new THREE.Color('#F7F0F3'),
         flatShading: true,
         roughness: 0.12,
         metalness: 0.05,
@@ -472,7 +472,7 @@ export const ArtifactsShowcase: React.FC<ArtifactsShowcaseProps> = ({
                 raycast={() => null}
               >
                 <meshBasicMaterial
-                  color="#C6A6FF"
+                  color="#C49AAE"
                   transparent
                   opacity={waveOpacity}
                   side={THREE.DoubleSide}
@@ -480,9 +480,9 @@ export const ArtifactsShowcase: React.FC<ArtifactsShowcaseProps> = ({
                 />
               </mesh>
 
-              {/* Localized Violet Catchlight with dynamic specular tracking */}
+              {/* Localized Dusty Rose Catchlight with dynamic specular tracking */}
               <pointLight
-                color="#C6A6FF"
+                color="#C49AAE"
                 intensity={0.32 + highlight * 0.95 + pulseStrength * 2.2}
                 distance={5.2}
                 decay={2}
@@ -537,7 +537,7 @@ export const ArtifactsShowcase: React.FC<ArtifactsShowcaseProps> = ({
                 raycast={() => null}
               >
                 <meshBasicMaterial
-                  color="#E9E1D6"
+                  color="#F0E0E4"
                   transparent
                   opacity={waveOpacity}
                   side={THREE.DoubleSide}
@@ -545,9 +545,9 @@ export const ArtifactsShowcase: React.FC<ArtifactsShowcaseProps> = ({
                 />
               </mesh>
 
-              {/* Localized Porcelain/Ember Catchlight with dynamic specular tracking */}
+              {/* Localized Champagne Ivory Catchlight with dynamic specular tracking */}
               <pointLight
-                color="#E9E1D6"
+                color="#F0E0E4"
                 intensity={0.32 + highlight * 0.95 + pulseStrength * 2.2}
                 distance={4.8}
                 decay={2}
@@ -604,8 +604,8 @@ export const ArtifactsShowcase: React.FC<ArtifactsShowcaseProps> = ({
                 position={[0, 0.05, 0]}
               >
                 <meshStandardMaterial
-                  color="#E5A66D"
-                  emissive="#E5A66D"
+                  color="#E8CDAF"
+                  emissive="#C98570"
                   emissiveIntensity={0.6 + highlight * 0.9 + pulseStrength * 3.0}
                   roughness={0.2}
                 />
@@ -620,7 +620,7 @@ export const ArtifactsShowcase: React.FC<ArtifactsShowcaseProps> = ({
                 raycast={() => null}
               >
                 <pointsMaterial
-                  color="#E5A66D"
+                  color="#E8CDAF"
                   size={0.065}
                   transparent
                   opacity={pulseStrength * 0.9}
@@ -629,9 +629,9 @@ export const ArtifactsShowcase: React.FC<ArtifactsShowcaseProps> = ({
                 />
               </points>
 
-              {/* Localized Ember Catchlight with dynamic specular tracking */}
+              {/* Localized Champagne Catchlight with dynamic specular tracking */}
               <pointLight
-                color="#E5A66D"
+                color="#E8CDAF"
                 intensity={0.38 + highlight * 1.0 + pulseStrength * 2.4}
                 distance={5.0}
                 decay={2}

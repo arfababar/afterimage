@@ -16,10 +16,11 @@ interface FairyParticle {
 
 const POOL_SIZE = 36;
 const PALETTE = [
-  '#C6A6FF', // muted violet
-  '#F4EFEB', // pearl white
-  '#E5A66D', // warm amber
-  '#D8C4FF', // soft iris
+  '#C49AAE', // dusty rose 2.0
+  '#F0E0E4', // soft rose ivory
+  '#E8CDAF', // champagne glow
+  '#C98570', // rose amber
+  '#96758F', // muted mauve
 ];
 
 export const CustomCursor: React.FC = () => {
@@ -319,20 +320,20 @@ export const CustomCursor: React.FC = () => {
               </filter>
               <linearGradient id="fairyWingGradFore" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.9" />
-                <stop offset="35%" stopColor="#C6A6FF" stopOpacity="0.65" />
-                <stop offset="75%" stopColor="#B896F8" stopOpacity="0.35" />
-                <stop offset="100%" stopColor="#E5A66D" stopOpacity="0.25" />
+                <stop offset="35%" stopColor="#C49AAE" stopOpacity="0.65" />
+                <stop offset="75%" stopColor="#A6798E" stopOpacity="0.35" />
+                <stop offset="100%" stopColor="#E8CDAF" stopOpacity="0.25" />
               </linearGradient>
               <linearGradient id="fairyWingGradBack" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#E9E1D6" stopOpacity="0.6" />
-                <stop offset="50%" stopColor="#9B72CF" stopOpacity="0.4" />
-                <stop offset="100%" stopColor="#C6A6FF" stopOpacity="0.15" />
+                <stop offset="0%" stopColor="#F0E0E4" stopOpacity="0.6" />
+                <stop offset="50%" stopColor="#7E566E" stopOpacity="0.4" />
+                <stop offset="100%" stopColor="#C49AAE" stopOpacity="0.15" />
               </linearGradient>
               <radialGradient id="fairySparkleGrad" cx="50%" cy="50%" r="50%">
                 <stop offset="0%" stopColor="#FFFFFF" />
-                <stop offset="45%" stopColor="#FFF2D6" />
-                <stop offset="75%" stopColor="#E5A66D" stopOpacity="0.8" />
-                <stop offset="100%" stopColor="#E5A66D" stopOpacity="0" />
+                <stop offset="45%" stopColor="#F8EDE1" />
+                <stop offset="75%" stopColor="#E8CDAF" stopOpacity="0.85" />
+                <stop offset="100%" stopColor="#C98570" stopOpacity="0" />
               </radialGradient>
             </defs>
 
@@ -341,13 +342,13 @@ export const CustomCursor: React.FC = () => {
               <path
                 d="M 13 12 C 11 6, 4 3, 5 10 C 6 13, 10 14, 13 13 Z"
                 fill="url(#fairyWingGradBack)"
-                stroke="rgba(198,166,255,0.45)"
+                stroke="rgba(196,154,174,0.45)"
                 strokeWidth="0.4"
               />
               <path
                 d="M 13 14 C 10 16, 5 17, 7 21 C 9 22, 12 18, 13 15 Z"
                 fill="url(#fairyWingGradBack)"
-                stroke="rgba(198,166,255,0.3)"
+                stroke="rgba(196,154,174,0.3)"
                 strokeWidth="0.4"
                 opacity="0.75"
               />
@@ -357,23 +358,23 @@ export const CustomCursor: React.FC = () => {
             <g className="fairy-body">
               <path
                 d="M 13 15 C 13.5 18, 12 21, 14 25 C 14.8 23, 15.5 19, 14.5 15 Z"
-                fill="#C6A6FF"
+                fill="#C49AAE"
                 opacity="0.7"
               />
               <path
                 d="M 13.2 16 C 13.8 19, 13 22, 14.2 24 C 14.5 22, 14.8 18, 14 16 Z"
-                fill="#E9E1D6"
+                fill="#F0E0E4"
                 opacity="0.5"
               />
               <path
                 d="M 12.8 10 C 13.2 11.5, 13.6 13.5, 13.3 15 C 13.8 15, 14.2 13.5, 13.9 11 Z"
-                fill="#F4EFEB"
+                fill="#F0E0E4"
               />
               <circle cx="13.2" cy="9.2" r="1.3" fill="#FFFFFF" />
               <path
                 d="M 13.2 11.2 C 11.5 9.5, 9.5 8, 7.5 7"
                 fill="none"
-                stroke="#F4EFEB"
+                stroke="#F0E0E4"
                 strokeWidth="0.6"
                 strokeLinecap="round"
               />
@@ -384,34 +385,34 @@ export const CustomCursor: React.FC = () => {
               <path
                 d="M 13.5 12 C 16 5, 23 2, 22 9 C 21 13, 17 14, 13.5 13 Z"
                 fill="url(#fairyWingGradFore)"
-                stroke="#E9E1D6"
+                stroke="#F0E0E4"
                 strokeWidth="0.5"
               />
               <path
                 d="M 13.5 12 C 17 8, 20 6, 21.5 8"
                 fill="none"
-                stroke="#C6A6FF"
+                stroke="#C49AAE"
                 strokeWidth="0.4"
                 opacity="0.8"
               />
               <path
                 d="M 16 10 C 18 11, 20 11.5, 21 11"
                 fill="none"
-                stroke="#E5A66D"
+                stroke="#E8CDAF"
                 strokeWidth="0.3"
                 opacity="0.7"
               />
               <path
                 d="M 13.5 14 C 17 17, 22 18, 20 22 C 17.5 23, 15 19, 13.5 15 Z"
                 fill="url(#fairyWingGradFore)"
-                stroke="rgba(198,166,255,0.6)"
+                stroke="rgba(196,154,174,0.6)"
                 strokeWidth="0.4"
                 opacity="0.85"
               />
               <path
                 d="M 13.5 14 C 16.5 17, 18.5 18, 19.5 20.5"
                 fill="none"
-                stroke="#C6A6FF"
+                stroke="#C49AAE"
                 strokeWidth="0.3"
                 opacity="0.6"
               />
@@ -419,7 +420,7 @@ export const CustomCursor: React.FC = () => {
 
             {/* Luminous core spark */}
             <circle cx="13.3" cy="11.8" r="1.1" fill="#FFFFFF" filter="url(#fairyCoreGlow)" />
-            <circle cx="13.3" cy="11.8" r="0.6" fill="#E5A66D" />
+            <circle cx="13.3" cy="11.8" r="0.6" fill="#E8CDAF" />
 
             {/* Guiding leading starlight aligned with pointer tip (6, 5) */}
             <g transform="translate(6, 5)">
@@ -430,7 +431,7 @@ export const CustomCursor: React.FC = () => {
               />
               <polygon
                 points="0,-1.5 0.35,-0.35 1.5,0 0.35,0.35 0,1.5 -0.35,0.35 -1.5,0 -0.35,-0.35"
-                fill="#E5A66D"
+                fill="#E8CDAF"
               />
             </g>
           </svg>

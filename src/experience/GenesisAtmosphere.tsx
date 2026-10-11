@@ -88,36 +88,36 @@ export const GenesisAtmosphere: React.FC<GenesisAtmosphereProps> = ({ opacityRef
           uv *= 1.0 - 0.22 * (sin(t * 0.28) * 0.5 + 0.5);
 
           vec3 col = vec3(0.0);
-          // Warm muted terracotta / bronze ambient base
-          vec3 baseColor = vec3(0.11, 0.065, 0.05) * (1.0 + bg * 0.45);
+          // Luminous rose plum ambient base
+          vec3 baseColor = vec3(0.18, 0.12, 0.15) * (1.0 + bg * 0.45);
 
           for (float i = 1.0; i < 9.0; i += 1.0) {
             uv += 0.08 * cos(i * vec2(0.1 + 0.01 * i, 0.8) + i * i + t * 0.35 + 0.1 * uv.x);
             vec2 p = uv;
             float d = length(p);
 
-            // Flowing ethereal warm filaments: Blush Pink & Peach to Warm Champagne Gold & Soft Amber
-            vec3 blushPeach = vec3(0.97, 0.68, 0.60);
-            vec3 champagneGold = vec3(0.98, 0.82, 0.54);
-            vec3 softAmber = vec3(0.92, 0.60, 0.34);
-            vec3 warmIvory = vec3(1.0, 0.95, 0.88);
+            // Flowing ethereal Rose Noir filaments: Dusty Rose, Champagne Glow, and Rose Amber
+            vec3 dustyRose = vec3(0.768, 0.604, 0.682); // #C49AAE
+            vec3 champagneGlow = vec3(0.910, 0.804, 0.686); // #E8CDAF
+            vec3 roseAmber = vec3(0.788, 0.522, 0.439); // #C98570
+            vec3 softRoseIvory = vec3(0.941, 0.878, 0.894); // #F0E0E4
 
             vec3 filamentTint = mix(
-              blushPeach,
-              champagneGold,
+              dustyRose,
+              champagneGlow,
               sin(i * 0.75 + t * 0.15) * 0.5 + 0.5
             );
-            filamentTint = mix(filamentTint, softAmber, cos(i * 0.5) * 0.3 + 0.3);
+            filamentTint = mix(filamentTint, roseAmber, cos(i * 0.5) * 0.3 + 0.3);
 
-            col += (0.00135 / max(d, 0.012)) * filamentTint;
+            col += (0.0014 / max(d, 0.012)) * filamentTint;
             float b = noise(i + p + bg * 1.731);
-            col += (0.0020 * b / max(length(max(p, vec2(b * p.x * 0.02, p.y))), 0.01)) * warmIvory;
-            // Warm golden-peach atmospheric cloud depth
-            col = mix(col, vec3(bg * 0.28, bg * 0.16, bg * 0.11), clamp(d * 0.45, 0.0, 1.0));
+            col += (0.0022 * b / max(length(max(p, vec2(b * p.x * 0.02, p.y))), 0.01)) * softRoseIvory;
+            // Rose amber and dusty rose atmospheric cloud depth
+            col = mix(col, vec3(bg * 0.28, bg * 0.19, bg * 0.24), clamp(d * 0.45, 0.0, 1.0));
           }
 
           vec3 finalColor = baseColor + col;
-          float vig = 1.0 - smoothstep(0.42, 1.5, length(vUv - 0.5));
+          float vig = 1.0 - smoothstep(0.55, 1.6, length(vUv - 0.5));
           finalColor *= vig;
 
           float alpha = uOpacity * clamp(length(finalColor) * 1.45, 0.0, 0.94);

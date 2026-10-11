@@ -37,14 +37,13 @@ const GlobalAtmosphere: React.FC = () => {
     const colors = new Float32Array(count * 3);
     const seeds = new Float32Array(count * 3);
 
-    const violet = new THREE.Color('#C6A6FF');
-    const amber = new THREE.Color('#E5A66D');
-    const porcelain = new THREE.Color('#E9E1D6');
-    const champagne = new THREE.Color('#F6DEC8');
-    const moonlitSilver = new THREE.Color('#BAC7E2');
-    const paleRose = new THREE.Color('#E0B0B8');
-    const iridescentBlue = new THREE.Color('#98B6F8');
-    const palette = [violet, amber, porcelain, champagne, moonlitSilver, paleRose, iridescentBlue];
+    const softRoseHaze = new THREE.Color('#B98B9F');
+    const dustyRose = new THREE.Color('#C49AAE');
+    const mutedMauve = new THREE.Color('#96758F');
+    const champagneGlow = new THREE.Color('#E8CDAF');
+    const softRoseIvory = new THREE.Color('#F0E0E4');
+    const roseAmber = new THREE.Color('#C98570');
+    const palette = [softRoseHaze, dustyRose, mutedMauve, champagneGlow, softRoseIvory, roseAmber];
 
     for (let i = 0; i < count; i++) {
       positions[i * 3] = (Math.random() - 0.5) * 15.0;
@@ -153,95 +152,95 @@ interface ChapterAtmosphere {
 }
 
 const CHAPTER_ATMOSPHERE: ChapterAtmosphere[] = [
-  // 0: THRESHOLD (Section 01) — Moonlit Silver, Ethereal Lavender, Obsidian
+  // 0: THRESHOLD (Section 02) — Luminous Dusty Rose, Warm Champagne, Velvet Rose Plum
   {
-    core: new THREE.Color('#BAC7E2'),
-    mid: new THREE.Color('#C6A6FF'),
-    fringe: new THREE.Color('#7886B8'),
-    alpha: 0.24,
-    fog: new THREE.Color('#14121A'),
-    fogFar: 22,
+    core: new THREE.Color('#F0D5C4'),
+    mid: new THREE.Color('#C49AAE'),
+    fringe: new THREE.Color('#4E384A'),
+    alpha: 0.88,
+    fog: new THREE.Color('#3E2B3C'),
+    fogFar: 24,
     fogNear: 6.5,
-    keyColor: new THREE.Color('#C6A6FF'),
-    keyIntensity: 1.2,
-    rimColor: new THREE.Color('#E5A66D'),
-    rimIntensity: 0.85,
-    topIntensity: 0.35,
+    keyColor: new THREE.Color('#F0E0E4'),
+    keyIntensity: 1.35,
+    rimColor: new THREE.Color('#E8CDAF'),
+    rimIntensity: 1.1,
+    topIntensity: 0.45,
   },
-  // 1: AFTERIMAGE (Section 02) — Radiant Champagne Gold, Warm Amber, Pale Rose & Iridescent Blue
+  // 1: AFTERIMAGE (Section 03) — Soft Rose Ivory, Soft Rose Haze & Rose Plum
   {
-    core: new THREE.Color('#F6DEC8'),
-    mid: new THREE.Color('#E5A66D'),
-    fringe: new THREE.Color('#7B9FF2'),
-    alpha: 0.38,
-    fog: new THREE.Color('#221A28'),
-    fogFar: 25.5,
+    core: new THREE.Color('#F0E0E4'),
+    mid: new THREE.Color('#B98B9F'),
+    fringe: new THREE.Color('#443042'),
+    alpha: 0.86,
+    fog: new THREE.Color('#3A2838'),
+    fogFar: 26,
     fogNear: 6.5,
-    keyColor: new THREE.Color('#F6DEC8'),
-    keyIntensity: 1.65,
-    rimColor: new THREE.Color('#A5C4F8'),
+    keyColor: new THREE.Color('#E8CDAF'),
+    keyIntensity: 1.6,
+    rimColor: new THREE.Color('#C49AAE'),
+    rimIntensity: 1.25,
+    topIntensity: 0.65,
+  },
+  // 2: SPATIAL ARCHITECTURE (Section 04) — Pale Rose Travertine, Muted Mauve & Warm Plum Charcoal
+  {
+    core: new THREE.Color('#EAD5DE'),
+    mid: new THREE.Color('#96758F'),
+    fringe: new THREE.Color('#3C293A'),
+    alpha: 0.85,
+    fog: new THREE.Color('#352534'),
+    fogFar: 25,
+    fogNear: 6.5,
+    keyColor: new THREE.Color('#F0E0E4'),
+    keyIntensity: 1.5,
+    rimColor: new THREE.Color('#C49AAE'),
+    rimIntensity: 1.15,
+    topIntensity: 0.6,
+  },
+  // 3: ARTIFACTS (Section 05) — Luminous Rose Pearl, Soft Rose Haze & Velvet Rose Shadow
+  {
+    core: new THREE.Color('#F3E4EA'),
+    mid: new THREE.Color('#B98B9F'),
+    fringe: new THREE.Color('#3A2737'),
+    alpha: 0.84,
+    fog: new THREE.Color('#332332'),
+    fogFar: 25,
+    fogNear: 6.5,
+    keyColor: new THREE.Color('#E8CDAF'),
+    keyIntensity: 1.55,
+    rimColor: new THREE.Color('#96758F'),
     rimIntensity: 1.2,
     topIntensity: 0.65,
   },
-  // 2: SPATIAL ARCHITECTURE (Section 03) — Translucent Alabaster, Pale Rose & Champagne Travertine
+  // 4: RESONANCE (Section 06) — Soft Mauve Silver, Muted Mauve & Velvet Rose Shadow
   {
-    core: new THREE.Color('#F2EAE0'),
-    mid: new THREE.Color('#E0B0B8'),
-    fringe: new THREE.Color('#C8A882'),
-    alpha: 0.35,
-    fog: new THREE.Color('#201924'),
-    fogFar: 25,
-    fogNear: 6.5,
-    keyColor: new THREE.Color('#FAF3EB'),
-    keyIntensity: 1.5,
-    rimColor: new THREE.Color('#E0B0B8'),
-    rimIntensity: 1.05,
-    topIntensity: 0.6,
-  },
-  // 3: ARTIFACTS (Section 04) — Crystalline Pearl-White, Prismatic Refraction Blue & Violet
-  {
-    core: new THREE.Color('#FFFFFF'),
-    mid: new THREE.Color('#98B6F8'),
-    fringe: new THREE.Color('#C6A6FF'),
-    alpha: 0.36,
-    fog: new THREE.Color('#181622'),
+    core: new THREE.Color('#DEC4D2'),
+    mid: new THREE.Color('#96758F'),
+    fringe: new THREE.Color('#382735'),
+    alpha: 0.85,
+    fog: new THREE.Color('#322230'),
     fogFar: 24,
     fogNear: 6.5,
-    keyColor: new THREE.Color('#F0F4FF'),
-    keyIntensity: 1.55,
-    rimColor: new THREE.Color('#C6A6FF'),
-    rimIntensity: 1.15,
-    topIntensity: 0.65,
-  },
-  // 4: RESONANCE (Section 05) — Smoky Silver, Cosmic Lavender & Warm Starlight Amber
-  {
-    core: new THREE.Color('#D1D7E4'),
-    mid: new THREE.Color('#A78BFA'),
-    fringe: new THREE.Color('#E5A66D'),
-    alpha: 0.33,
-    fog: new THREE.Color('#16131F'),
-    fogFar: 23,
-    fogNear: 6.5,
-    keyColor: new THREE.Color('#C4B5FD'),
+    keyColor: new THREE.Color('#E8CDAF'),
     keyIntensity: 1.45,
-    rimColor: new THREE.Color('#E5A66D'),
-    rimIntensity: 1.1,
-    topIntensity: 0.55,
+    rimColor: new THREE.Color('#C98570'),
+    rimIntensity: 1.15,
+    topIntensity: 0.58,
   },
-  // 5: CODA (Section 06) — Ethereal Dawn: Champagne Gold, Morning Rose & Moonlit Horizon
+  // 5: CODA (Section 07) — Champagne Gold Dawn, Muted Rose Amber & Velvet Rose Plum
   {
-    core: new THREE.Color('#F7E5D0'),
-    mid: new THREE.Color('#E8C5D0'),
-    fringe: new THREE.Color('#BAC7E2'),
-    alpha: 0.42,
-    fog: new THREE.Color('#241C28'),
-    fogFar: 26,
+    core: new THREE.Color('#F0D5BE'),
+    mid: new THREE.Color('#C98570'),
+    fringe: new THREE.Color('#5A3D50'),
+    alpha: 0.90,
+    fog: new THREE.Color('#422D3E'),
+    fogFar: 27,
     fogNear: 7.5,
-    keyColor: new THREE.Color('#F5E0C8'),
-    keyIntensity: 1.6,
-    rimColor: new THREE.Color('#D4C4F4'),
-    rimIntensity: 0.9,
-    topIntensity: 0.7,
+    keyColor: new THREE.Color('#F5E5D8'),
+    keyIntensity: 1.65,
+    rimColor: new THREE.Color('#C98570'),
+    rimIntensity: 1.1,
+    topIntensity: 0.72,
   },
 ];
 
@@ -262,10 +261,10 @@ const LuminousVolumetricHorizon: React.FC<LuminousVolumetricHorizonProps> = ({ p
       uniforms: {
         uTime: { value: 0 },
         uPointer: { value: new THREE.Vector2(0, 0) },
-        uColorCore: { value: new THREE.Color('#BAC7E2') },
-        uColorMid: { value: new THREE.Color('#C6A6FF') },
-        uColorFringe: { value: new THREE.Color('#7886B8') },
-        uAlpha: { value: 0.24 },
+        uColorCore: { value: new THREE.Color('#F0D5C4') },
+        uColorMid: { value: new THREE.Color('#C49AAE') },
+        uColorFringe: { value: new THREE.Color('#4E384A') },
+        uAlpha: { value: 0.88 },
       },
       vertexShader: `
         varying vec2 vUv;
@@ -286,29 +285,34 @@ const LuminousVolumetricHorizon: React.FC<LuminousVolumetricHorizonProps> = ({ p
 
         void main() {
           vec2 centered = (vUv - vec2(0.5, 0.46)) * 2.0;
-          centered.x += uPointer.x * 0.12;
-          centered.y += uPointer.y * 0.08;
-          centered.y *= 1.32;
+          centered.x += uPointer.x * 0.08;
+          centered.y += uPointer.y * 0.05;
+          centered.y *= 1.18;
 
           float dist = length(centered);
-          float wave = sin(atan(centered.y, centered.x) * 4.0 + uTime * 0.3) * 0.035;
+          float wave = sin(atan(centered.y, centered.x) * 3.0 + uTime * 0.22) * 0.035;
           float r = dist + wave;
 
-          float coreFalloff = smoothstep(1.35, 0.0, r);
-          coreFalloff = pow(coreFalloff, 2.1);
-
-          float midBlend = smoothstep(0.10, 0.75, r);
+          // Radial atmospheric color field: Core -> Mid -> Fringe
+          float midBlend = smoothstep(0.06, 0.65, r);
           vec3 atmosphereColor = mix(uColorCore, uColorMid, midBlend);
 
-          float fringeBlend = smoothstep(0.60, 1.20, r);
+          float fringeBlend = smoothstep(0.50, 1.35, r);
           atmosphereColor = mix(atmosphereColor, uColorFringe, fringeBlend);
 
-          gl_FragColor = vec4(atmosphereColor, coreFalloff * uAlpha);
+          // Subtle organic vignette toward the far perimeter to frame the 3D scene
+          float vig = 1.0 - smoothstep(1.25, 2.15, dist);
+          atmosphereColor *= vig;
+
+          // Gentle opacity curve ensuring rich colored background everywhere without empty voids
+          float alpha = uAlpha * clamp(0.72 + (1.0 - smoothstep(0.0, 1.4, r)) * 0.24, 0.0, 1.0);
+
+          gl_FragColor = vec4(atmosphereColor, alpha);
         }
       `,
       transparent: true,
       depthWrite: false,
-      blending: THREE.AdditiveBlending,
+      blending: THREE.NormalBlending,
     });
   }, []);
 
@@ -339,7 +343,7 @@ const LuminousVolumetricHorizon: React.FC<LuminousVolumetricHorizonProps> = ({ p
   });
 
   return (
-    <mesh ref={meshRef} position={[0, 0.4, -13.5]} scale={[30, 20, 1]}>
+    <mesh ref={meshRef} position={[0, 0.4, -14]} scale={[42, 28, 1]}>
       <planeGeometry args={[1, 1, 16, 16]} />
       <primitive object={horizonMaterial} ref={shaderMatRef} attach="material" />
     </mesh>
@@ -432,10 +436,11 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
     const resonanceScale = isDesktop ? 1.0 : Math.min(Math.max(viewport.width / 7.5, 0.58), 0.85);
     const resonanceEndY = isDesktop ? 0 : -0.15;
 
-    // Set initial position
-    rig.position.set(startX, startY, startZ);
+    // Set initial position: rig starts submerged and hidden during Section 1
+    rig.position.set(startX, startY - 18.0, startZ - 5.0);
     rig.scale.setScalar(startScale);
     rig.rotation.y = 0;
+    rig.visible = false;
 
     // Initial position for spatial architecture group (submerged in lower fog)
     if (archGroup) {
@@ -461,6 +466,8 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
     if (archGroup) archGroup.visible = false;
     if (artifactsGroup) artifactsGroup.visible = false;
     if (resonanceGroup) resonanceGroup.visible = false;
+    const genesisGroup = genesisGroupRef.current;
+    if (genesisGroup) genesisGroup.visible = true;
 
     // Isolate 3D installations to their respective sections (works in both normal and reduced motion)
     if (archGroup) {
@@ -504,18 +511,31 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
         if (rig) rig.visible = false;
       },
       onLeaveBack: () => {
-        if (rig) rig.visible = true;
+        if (rig) {
+          const genesisEl = document.querySelector('#genesis');
+          const genesisBottom = genesisEl ? genesisEl.getBoundingClientRect().bottom : -1;
+          // Only re-show rig if we are not back in Section 1
+          if (genesisBottom <= 80) {
+            rig.visible = true;
+          }
+        }
       },
     });
 
-    const genesisGroup = genesisGroupRef.current;
     if (genesisGroup) {
+      genesisGroup.visible = true;
       ScrollTrigger.create({
         trigger: '#genesis',
-        start: 'top bottom',
+        start: 'top 80px',
         end: 'bottom top',
-        onToggle: (self) => {
-          if (genesisGroup) genesisGroup.visible = self.isActive;
+        onLeave: () => {
+          if (genesisGroup) genesisGroup.visible = false;
+        },
+        onEnterBack: () => {
+          if (genesisGroup) genesisGroup.visible = true;
+        },
+        onLeaveBack: () => {
+          if (genesisGroup) genesisGroup.visible = true;
         },
       });
     }
@@ -548,12 +568,18 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
         trigger: '#genesis',
         start: 'top 80px',
         end: 'bottom top',
-        scrub: 1.2,
+        scrub: 0.45,
         invalidateOnRefresh: true,
       },
     });
 
     genesisTl
+      .fromTo(
+        journeyProgress,
+        { current: 0.0 },
+        { current: 0.0, duration: 1.0 },
+        0
+      )
       // Phase 1: Camera approach from full-body (z: 3.8, y: 0.05) to upper-body (z: 1.7, y: 0.36)
       .fromTo(
         baseCameraPos.current,
@@ -610,11 +636,13 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
       );
 
     if (rig) {
-      // Threshold sculpture ascends from deep below during the bloom transition
+      // Threshold sculpture is hidden in Section 1, becomes visible during bloom handoff to Section 2
+      genesisTl.set(rig, { visible: false }, 0);
+      genesisTl.set(rig, { visible: true }, 0.76);
       genesisTl.fromTo(
         rig.position,
         { x: startX, y: startY - 18.0, z: startZ - 5.0 },
-        { x: startX, y: startY, z: startZ, duration: 0.24, ease: 'power2.out' },
+        { x: startX, y: startY, z: startZ, duration: 0.24, ease: 'power2.out', immediateRender: false },
         0.76
       );
     }
@@ -634,12 +662,12 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
         trigger: '#afterimage',
         start: 'top bottom',
         end: 'top 40%',
-        scrub: 1.2,
+        scrub: 0.45,
         invalidateOnRefresh: true,
       },
     });
 
-    tl.fromTo(journeyProgress, { current: 0.0 }, { current: 1.0, ease: 'power2.inOut' }, 0)
+    tl.fromTo(journeyProgress, { current: 0.0 }, { current: 1.0, ease: 'power2.inOut', immediateRender: false }, 0)
       .fromTo(
         baseCameraPos.current,
         {
@@ -653,6 +681,7 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
           z: 4.6,
           duration: 0.48,
           ease: 'power1.inOut',
+          immediateRender: false,
         },
         0
       )
@@ -663,6 +692,7 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
           z: -0.022,
           duration: 0.48,
           ease: 'power1.inOut',
+          immediateRender: false,
         },
         0
       )
@@ -726,13 +756,13 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
           trigger: '#architecture',
           start: 'top bottom',
           end: 'top 15%',
-          scrub: 1.2,
+          scrub: 0.45,
           invalidateOnRefresh: true,
         },
       });
 
       archTl
-        .fromTo(journeyProgress, { current: 1.0 }, { current: 2.0, ease: 'power2.inOut' }, 0)
+        .fromTo(journeyProgress, { current: 1.0 }, { current: 2.0, ease: 'power2.inOut', immediateRender: false }, 0)
         .fromTo(
           baseCameraPos.current,
           {
@@ -746,6 +776,7 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
             z: 5.1,
             duration: 0.46,
             ease: 'power1.inOut',
+            immediateRender: false,
           },
           0
         )
@@ -756,6 +787,7 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
             z: 0.018,
             duration: 0.46,
             ease: 'power1.inOut',
+            immediateRender: false,
           },
           0
         )
@@ -837,13 +869,13 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
             trigger: '#artifacts',
             start: 'top bottom',
             end: 'top 15%',
-            scrub: 1.2,
+            scrub: 0.45,
             invalidateOnRefresh: true,
           },
         });
 
         artifactsTl
-          .fromTo(journeyProgress, { current: 2.0 }, { current: 3.0, ease: 'power2.inOut' }, 0)
+          .fromTo(journeyProgress, { current: 2.0 }, { current: 3.0, ease: 'power2.inOut', immediateRender: false }, 0)
           .fromTo(
             baseCameraPos.current,
             {
@@ -857,6 +889,7 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
               z: 5.3,
               duration: 0.48,
               ease: 'power1.inOut',
+              immediateRender: false,
             },
             0
           )
@@ -867,6 +900,7 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
               z: -0.016,
               duration: 0.48,
               ease: 'power1.inOut',
+              immediateRender: false,
             },
             0
           )
@@ -958,13 +992,13 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
               trigger: '#resonance',
               start: 'top bottom',
               end: 'top 15%',
-              scrub: 1.2,
+              scrub: 0.45,
               invalidateOnRefresh: true,
             },
           });
 
           resonanceTl
-            .fromTo(journeyProgress, { current: 3.0 }, { current: 4.0, ease: 'power2.inOut' }, 0)
+            .fromTo(journeyProgress, { current: 3.0 }, { current: 4.0, ease: 'power2.inOut', immediateRender: false }, 0)
             .fromTo(
               baseCameraPos.current,
               {
@@ -978,6 +1012,7 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
                 z: 5.1,
                 duration: 0.46,
                 ease: 'power1.inOut',
+                immediateRender: false,
               },
               0
             )
@@ -988,6 +1023,7 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
                 z: 0.015,
                 duration: 0.46,
                 ease: 'power1.inOut',
+                immediateRender: false,
               },
               0
             )
@@ -1059,13 +1095,13 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
               trigger: '#coda',
               start: 'top 70%',
               end: 'top 15%',
-              scrub: 1.2,
+              scrub: 0.45,
               invalidateOnRefresh: true,
             },
           });
 
           codaTl
-            .fromTo(journeyProgress, { current: 4.0 }, { current: 5.0, ease: 'power2.inOut' }, 0)
+            .fromTo(journeyProgress, { current: 4.0 }, { current: 5.0, ease: 'power2.inOut', immediateRender: false }, 0)
             .fromTo(
               baseCameraPos.current,
               {
@@ -1079,6 +1115,7 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
                 z: 6.1,
                 duration: 0.48,
                 ease: 'power1.inOut',
+                immediateRender: false,
               },
               0
             )
@@ -1219,43 +1256,43 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
 
   return (
     <group name="afterimage-world">
-      {/* Restrained cinematic depth fog blending distant space into obsidian void */}
-      <fog ref={fogRef} attach="fog" args={['#17151B', 6.5, 22]} />
+      {/* Restrained cinematic depth fog blending distant space into velvet rose shadow */}
+      <fog ref={fogRef} attach="fog" args={['#382735', 6.5, 24]} />
 
-      {/* Dark atmospheric base with subtle violet undertone */}
-      <ambientLight intensity={0.42} color="#1A1524" />
+      {/* Atmospheric base with warm rose-plum undertone to lift dark shadows */}
+      <ambientLight intensity={0.68} color="#4A3445" />
 
-      {/* Pointer-reactive Key Light: Spectral violet */}
+      {/* Pointer-reactive Key Light: Soft Rose Ivory */}
       <directionalLight
         ref={keyLightRef}
         position={[4, 6, 4]}
-        intensity={1.2}
-        color="#C6A6FF"
+        intensity={1.35}
+        color="#F0E0E4"
       />
 
-      {/* Dynamic Rim / Counter Light: Muted ember */}
+      {/* Dynamic Rim / Counter Light: Champagne Glow */}
       <pointLight
         ref={rimLightRef}
         position={[-4, -3, -1]}
-        intensity={0.85}
-        color="#E5A66D"
+        intensity={1.05}
+        color="#E8CDAF"
         distance={22}
       />
 
-      {/* Reactive Top Glance: Warm porcelain */}
+      {/* Reactive Top Glance: Soft Rose Ivory */}
       <pointLight
         ref={topLightRef}
         position={[1, 5, 3]}
-        intensity={0.35}
-        color="#E9E1D6"
+        intensity={0.45}
+        color="#F0E0E4"
         distance={16}
       />
 
-      {/* Low Back-depth Fill: Subtle warm-ember spatial separation */}
+      {/* Low Back-depth Fill: Dusty Rose spatial separation */}
       <pointLight
         position={[-2, -2.5, -3.5]}
-        intensity={0.45}
-        color="#E5A66D"
+        intensity={0.65}
+        color="#C49AAE"
         distance={18}
         decay={2}
       />

@@ -193,7 +193,7 @@ export const ResonanceField: React.FC<ResonanceFieldProps> = ({
       frequencies[i] = 1.6 + Math.random() * 1.2;
       phases[i] = Math.random() * Math.PI * 2;
 
-      // Color Palette: Smoky silver, charcoal grey, and muted lavender
+      // Color Palette: Velvet plum cavity, muted mauve, dusty rose, and soft rose ivory
       const isCavity = hollowWeight > 0.2;
       const colorType = Math.random();
 
@@ -202,28 +202,28 @@ export const ResonanceField: React.FC<ResonanceFieldProps> = ({
       let cb: number;
 
       if (isCavity) {
-        // Charcoal grey with subtle depth
+        // Deep velvet plum cavity (#452D40 -> #5A3D52)
         const factor = 0.4 + Math.random() * 0.15;
-        cr = 0.42 * factor + 0.22;
-        cg = 0.39 * factor + 0.2;
-        cb = 0.48 * factor + 0.25;
+        cr = 0.52 * factor + 0.22;
+        cg = 0.32 * factor + 0.15;
+        cb = 0.46 * factor + 0.20;
       } else if (colorType < 0.46) {
-        // Smoky silver
+        // Muted mauve (#96758F -> #A6859F)
         const brightness = 0.78 + Math.random() * 0.16;
-        cr = 0.82 * brightness;
-        cg = 0.8 * brightness;
-        cb = 0.86 * brightness;
+        cr = 0.65 * brightness;
+        cg = 0.51 * brightness;
+        cb = 0.62 * brightness;
       } else if (colorType < 0.84) {
-        // Muted lavender
+        // Dusty rose (#C49AAE)
         const factor = 0.72 + Math.random() * 0.16;
-        cr = 0.72 * factor;
+        cr = 0.82 * factor;
         cg = 0.64 * factor;
-        cb = 0.82 * factor;
+        cb = 0.72 * factor;
       } else {
-        // Medium slate charcoal
-        cr = 0.52;
-        cg = 0.48;
-        cb = 0.58;
+        // Soft rose ivory (#F0E0E4)
+        cr = 0.94;
+        cg = 0.88;
+        cb = 0.89;
       }
 
       colors[i * 3] = cr;
@@ -275,16 +275,18 @@ export const ResonanceField: React.FC<ResonanceFieldProps> = ({
       frequencies[idx] = 1.6 + Math.random() * 1.2;
       phases[idx] = Math.random() * Math.PI * 2;
 
-      // Striations: luminous smoky silver and muted lavender
-      const isLavender = j % 3 === 0;
-      if (isLavender) {
-        colors[idx * 3] = 0.75;
-        colors[idx * 3 + 1] = 0.66;
-        colors[idx * 3 + 2] = 0.85;
+      // Striations: luminous champagne glow and dusty rose
+      const isRose = j % 3 === 0;
+      if (isRose) {
+        // Dusty rose (#C49AAE)
+        colors[idx * 3] = 0.77;
+        colors[idx * 3 + 1] = 0.60;
+        colors[idx * 3 + 2] = 0.68;
       } else {
-        colors[idx * 3] = 0.85;
-        colors[idx * 3 + 1] = 0.83;
-        colors[idx * 3 + 2] = 0.89;
+        // Champagne glow (#E8CDAF)
+        colors[idx * 3] = 0.91;
+        colors[idx * 3 + 1] = 0.80;
+        colors[idx * 3 + 2] = 0.69;
       }
     }
 

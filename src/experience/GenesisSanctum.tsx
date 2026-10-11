@@ -159,7 +159,7 @@ const CharacterPresenceAura: React.FC<{
         <cylinderGeometry args={[0.22, 0.32, 1.68, 32, 1, true]} />
         <meshBasicMaterial
           ref={auraMatRef}
-          color="#FFE2A8"
+          color="#E8CDAF"
           transparent
           opacity={0.45}
           side={THREE.DoubleSide}
@@ -208,9 +208,9 @@ const TransitionBloomQuad: React.FC<{
         void main() {
           vec2 center = vUv - 0.5;
           float dist = length(center);
-          vec3 coreIvory = vec3(1.0, 0.96, 0.90);
-          vec3 blushPeach = vec3(0.98, 0.76, 0.60);
-          vec3 col = mix(coreIvory, blushPeach, smoothstep(0.0, 0.65, dist));
+          vec3 coreIvory = vec3(0.941, 0.878, 0.894);
+          vec3 dustyRoseBloom = vec3(0.768, 0.604, 0.682);
+          vec3 col = mix(coreIvory, dustyRoseBloom, smoothstep(0.0, 0.70, dist));
           float alpha = uBloom * smoothstep(1.0, 0.08, dist) * 0.98;
           gl_FragColor = vec4(col, alpha);
         }
@@ -319,31 +319,31 @@ export const GenesisSanctum: React.FC<GenesisSanctumProps> = ({
   return (
     <>
       <group ref={sceneGroupRef} position={[0, 0, 0]}>
-        {/* Key Spotlight: Warm Ivory highlighting facial features & hair contours */}
+        {/* Key Spotlight: Soft Rose Ivory highlighting facial features & hair contours */}
         <spotLight
           ref={keyLightRef}
           position={[1.8, 2.5, 2.2]}
           target-position={[0, 0.4, 0]}
-          color="#FFF6EB"
+          color="#F0E0E4"
           intensity={2.4}
           angle={0.65}
           penumbra={0.75}
         />
 
-        {/* Silhouette Rim Light: Warm Champagne Gold separating character from background */}
+        {/* Silhouette Rim Light: Champagne Glow separating character from background */}
         <pointLight
           ref={rimLightRef}
           position={[0, 1.3, -1.8]}
-          color="#FFE09A"
+          color="#E8CDAF"
           intensity={3.2}
           distance={7.5}
         />
 
-        {/* Soft Warm Fill Light: Blush Peach softening front-right shadows */}
+        {/* Soft Warm Fill Light: Dusty Rose softening front-right shadows */}
         <pointLight
           ref={fillLightRef}
           position={[-1.6, 0.3, 1.8]}
-          color="#F9D2B8"
+          color="#C49AAE"
           intensity={1.1}
           distance={6}
         />
@@ -353,7 +353,7 @@ export const GenesisSanctum: React.FC<GenesisSanctumProps> = ({
           <pointsMaterial
             ref={starlightMatRef}
             size={0.032}
-            color="#FFE6B8"
+            color="#E8CDAF"
             transparent
             opacity={0.55}
             blending={THREE.AdditiveBlending}

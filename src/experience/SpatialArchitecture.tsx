@@ -23,7 +23,7 @@ export const ARCHITECTURE_DATA: Record<ArchitectureId, ArchitectureItemData> = {
     description:
       'A curved obsidian archway framing an inner pane of tinted glass. Built from twin pillars and a smooth crown, it stands like a doorway open to the dark.',
     coordinates: 'X: -1.9 · Y: +0.2 · Z: -0.6',
-    accentColor: '#C6A6FF',
+    accentColor: '#C49AAE',
   },
   oculus: {
     id: 'oculus',
@@ -33,7 +33,7 @@ export const ARCHITECTURE_DATA: Record<ArchitectureId, ArchitectureItemData> = {
     description:
       'A circular frame tilted forward toward the eye. A subtle amber rim light catches its outer edge, while the center holds a quiet, translucent lens.',
     coordinates: 'X: +1.8 · Y: +0.45 · Z: +0.3',
-    accentColor: '#E5A66D',
+    accentColor: '#E8CDAF',
   },
   pylon: {
     id: 'pylon',
@@ -43,7 +43,7 @@ export const ARCHITECTURE_DATA: Record<ArchitectureId, ArchitectureItemData> = {
     description:
       'Two pillars of different heights carrying an offset horizontal beam. Resting low in the space, its upper ledge catches a pale violet gleam.',
     coordinates: 'X: -0.1 · Y: -1.25 · Z: -1.3',
-    accentColor: '#E9E1D6',
+    accentColor: '#C98570',
   },
 };
 
@@ -209,7 +209,7 @@ export const SpatialArchitecture: React.FC<SpatialArchitectureProps> = ({
   // Shared obsidian frame material
   const obsidianMaterial = useMemo(() => {
     return new THREE.MeshStandardMaterial({
-      color: new THREE.Color('#16121E'),
+      color: new THREE.Color('#2A1D28'),
       roughness: 0.28,
       metalness: 0.85,
     });
@@ -218,7 +218,7 @@ export const SpatialArchitecture: React.FC<SpatialArchitectureProps> = ({
   // Translucent dark glass inner aperture material
   const glassApertureMaterial = useMemo(() => {
     return new THREE.MeshPhysicalMaterial({
-      color: new THREE.Color('#100D16'),
+      color: new THREE.Color('#382635'),
       roughness: 0.16,
       metalness: 0.1,
       clearcoat: 0.8,
@@ -288,21 +288,21 @@ export const SpatialArchitecture: React.FC<SpatialArchitectureProps> = ({
               material={glassApertureMaterial}
               position={[0, 0.35, -0.02]}
             />
-            {/* Spectral Violet Glowing Rim Strip */}
+            {/* Dusty Rose Glowing Rim Strip */}
             <mesh
               geometry={vaultRimGeom}
               position={[0, 0.75, 0.05]}
             >
               <meshStandardMaterial
-                color="#C6A6FF"
-                emissive="#C6A6FF"
+                color="#C49AAE"
+                emissive="#C49AAE"
                 emissiveIntensity={0.35 + highlight * 0.65}
                 roughness={0.2}
               />
             </mesh>
-            {/* Localized Spectral Catchlight */}
+            {/* Localized Dusty Rose Catchlight */}
             <pointLight
-              color="#C6A6FF"
+              color="#C49AAE"
               intensity={0.2 + highlight * 1.1}
               distance={4.2}
               decay={2}
@@ -339,22 +339,22 @@ export const SpatialArchitecture: React.FC<SpatialArchitectureProps> = ({
               scale={[1.0, 1.25, 1.0]}
               position={[0, 0, -0.02]}
             />
-            {/* Muted Ember Accent Ring */}
+            {/* Champagne Glow Accent Ring */}
             <mesh
               geometry={oculusAccentGeom}
               scale={[1.0, 1.25, 1.0]}
               position={[0, 0, 0.05]}
             >
               <meshStandardMaterial
-                color="#E5A66D"
-                emissive="#E5A66D"
+                color="#E8CDAF"
+                emissive="#E8CDAF"
                 emissiveIntensity={0.35 + highlight * 0.65}
                 roughness={0.2}
               />
             </mesh>
-            {/* Localized Ember Catchlight */}
+            {/* Localized Champagne Catchlight */}
             <pointLight
-              color="#E5A66D"
+              color="#E8CDAF"
               intensity={0.2 + highlight * 1.1}
               distance={4.2}
               decay={2}
@@ -402,21 +402,21 @@ export const SpatialArchitecture: React.FC<SpatialArchitectureProps> = ({
               material={glassApertureMaterial}
               position={[0, 0.05, -0.03]}
             />
-            {/* Porcelain-Violet Duotone Glowing Lintel Edge */}
+            {/* Champagne-Rose Amber Duotone Glowing Lintel Edge */}
             <mesh
               geometry={pylonAccentGeom}
               position={[0.1, 1.35, 0.02]}
             >
               <meshStandardMaterial
-                color="#E9E1D6"
-                emissive="#C6A6FF"
+                color="#F0E0E4"
+                emissive="#C98570"
                 emissiveIntensity={0.3 + highlight * 0.65}
                 roughness={0.2}
               />
             </mesh>
-            {/* Localized Duotone Catchlight */}
+            {/* Localized Rose Amber Catchlight */}
             <pointLight
-              color="#C6A6FF"
+              color="#C98570"
               intensity={0.2 + highlight * 1.1}
               distance={4.2}
               decay={2}
