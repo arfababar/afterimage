@@ -36,14 +36,18 @@ const GlobalAtmosphere: React.FC = () => {
     const seeds = new Float32Array(count * 3);
 
     const violet = new THREE.Color('#C6A6FF');
-    const ember = new THREE.Color('#E5A66D');
+    const amber = new THREE.Color('#E5A66D');
     const porcelain = new THREE.Color('#E9E1D6');
-    const palette = [violet, ember, porcelain];
+    const champagne = new THREE.Color('#F6DEC8');
+    const moonlitSilver = new THREE.Color('#BAC7E2');
+    const paleRose = new THREE.Color('#E0B0B8');
+    const iridescentBlue = new THREE.Color('#98B6F8');
+    const palette = [violet, amber, porcelain, champagne, moonlitSilver, paleRose, iridescentBlue];
 
     for (let i = 0; i < count; i++) {
-      positions[i * 3] = (Math.random() - 0.5) * 14.0;
+      positions[i * 3] = (Math.random() - 0.5) * 15.0;
       positions[i * 3 + 1] = (Math.random() - 0.5) * 22.0 - 2.0;
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 12.0 - 1.5;
+      positions[i * 3 + 2] = (Math.random() - 0.5) * 12.0;
 
       const col = palette[i % palette.length];
       colors[i * 3] = col.r;
@@ -125,6 +129,221 @@ const GlobalAtmosphere: React.FC = () => {
   return <points ref={pointsRef} geometry={particleData.geom} material={material} raycast={() => null} />;
 };
 
+/**
+ * Luminous Volumetric Horizon:
+ * An expansive, living atmospheric light field spanning the deep horizon.
+ * In Chapter 1 (Threshold): Projects a moonlit silver & ethereal lavender aura behind the dark silhouette.
+ * In Chapter 2 (The Afterimage): Blooms into radiant champagne gold, warm glowing amber, pale rose, and iridescent blue.
+ */
+interface ChapterAtmosphere {
+  core: THREE.Color;
+  mid: THREE.Color;
+  fringe: THREE.Color;
+  alpha: number;
+  fog: THREE.Color;
+  fogFar: number;
+  fogNear: number;
+  keyColor: THREE.Color;
+  keyIntensity: number;
+  rimColor: THREE.Color;
+  rimIntensity: number;
+  topIntensity: number;
+}
+
+const CHAPTER_ATMOSPHERE: ChapterAtmosphere[] = [
+  // 0: THRESHOLD (Section 01) — Moonlit Silver, Ethereal Lavender, Obsidian
+  {
+    core: new THREE.Color('#BAC7E2'),
+    mid: new THREE.Color('#C6A6FF'),
+    fringe: new THREE.Color('#7886B8'),
+    alpha: 0.24,
+    fog: new THREE.Color('#14121A'),
+    fogFar: 22,
+    fogNear: 6.5,
+    keyColor: new THREE.Color('#C6A6FF'),
+    keyIntensity: 1.2,
+    rimColor: new THREE.Color('#E5A66D'),
+    rimIntensity: 0.85,
+    topIntensity: 0.35,
+  },
+  // 1: AFTERIMAGE (Section 02) — Radiant Champagne Gold, Warm Amber, Pale Rose & Iridescent Blue
+  {
+    core: new THREE.Color('#F6DEC8'),
+    mid: new THREE.Color('#E5A66D'),
+    fringe: new THREE.Color('#7B9FF2'),
+    alpha: 0.38,
+    fog: new THREE.Color('#221A28'),
+    fogFar: 25.5,
+    fogNear: 6.5,
+    keyColor: new THREE.Color('#F6DEC8'),
+    keyIntensity: 1.65,
+    rimColor: new THREE.Color('#A5C4F8'),
+    rimIntensity: 1.2,
+    topIntensity: 0.65,
+  },
+  // 2: SPATIAL ARCHITECTURE (Section 03) — Translucent Alabaster, Pale Rose & Champagne Travertine
+  {
+    core: new THREE.Color('#F2EAE0'),
+    mid: new THREE.Color('#E0B0B8'),
+    fringe: new THREE.Color('#C8A882'),
+    alpha: 0.35,
+    fog: new THREE.Color('#201924'),
+    fogFar: 25,
+    fogNear: 6.5,
+    keyColor: new THREE.Color('#FAF3EB'),
+    keyIntensity: 1.5,
+    rimColor: new THREE.Color('#E0B0B8'),
+    rimIntensity: 1.05,
+    topIntensity: 0.6,
+  },
+  // 3: ARTIFACTS (Section 04) — Crystalline Pearl-White, Prismatic Refraction Blue & Violet
+  {
+    core: new THREE.Color('#FFFFFF'),
+    mid: new THREE.Color('#98B6F8'),
+    fringe: new THREE.Color('#C6A6FF'),
+    alpha: 0.36,
+    fog: new THREE.Color('#181622'),
+    fogFar: 24,
+    fogNear: 6.5,
+    keyColor: new THREE.Color('#F0F4FF'),
+    keyIntensity: 1.55,
+    rimColor: new THREE.Color('#C6A6FF'),
+    rimIntensity: 1.15,
+    topIntensity: 0.65,
+  },
+  // 4: RESONANCE (Section 05) — Smoky Silver, Cosmic Lavender & Warm Starlight Amber
+  {
+    core: new THREE.Color('#D1D7E4'),
+    mid: new THREE.Color('#A78BFA'),
+    fringe: new THREE.Color('#E5A66D'),
+    alpha: 0.33,
+    fog: new THREE.Color('#16131F'),
+    fogFar: 23,
+    fogNear: 6.5,
+    keyColor: new THREE.Color('#C4B5FD'),
+    keyIntensity: 1.45,
+    rimColor: new THREE.Color('#E5A66D'),
+    rimIntensity: 1.1,
+    topIntensity: 0.55,
+  },
+  // 5: CODA (Section 06) — Ethereal Dawn: Champagne Gold, Morning Rose & Moonlit Horizon
+  {
+    core: new THREE.Color('#F7E5D0'),
+    mid: new THREE.Color('#E8C5D0'),
+    fringe: new THREE.Color('#BAC7E2'),
+    alpha: 0.42,
+    fog: new THREE.Color('#241C28'),
+    fogFar: 26,
+    fogNear: 7.5,
+    keyColor: new THREE.Color('#F5E0C8'),
+    keyIntensity: 1.6,
+    rimColor: new THREE.Color('#D4C4F4'),
+    rimIntensity: 0.9,
+    topIntensity: 0.7,
+  },
+];
+
+interface LuminousVolumetricHorizonProps {
+  progressRef: React.MutableRefObject<number>;
+}
+
+const LuminousVolumetricHorizon: React.FC<LuminousVolumetricHorizonProps> = ({ progressRef }) => {
+  const meshRef = useRef<THREE.Mesh>(null);
+  const shaderMatRef = useRef<THREE.ShaderMaterial>(null);
+
+  const tempCore = React.useMemo(() => new THREE.Color(), []);
+  const tempMid = React.useMemo(() => new THREE.Color(), []);
+  const tempFringe = React.useMemo(() => new THREE.Color(), []);
+
+  const horizonMaterial = React.useMemo(() => {
+    return new THREE.ShaderMaterial({
+      uniforms: {
+        uTime: { value: 0 },
+        uPointer: { value: new THREE.Vector2(0, 0) },
+        uColorCore: { value: new THREE.Color('#BAC7E2') },
+        uColorMid: { value: new THREE.Color('#C6A6FF') },
+        uColorFringe: { value: new THREE.Color('#7886B8') },
+        uAlpha: { value: 0.24 },
+      },
+      vertexShader: `
+        varying vec2 vUv;
+        void main() {
+          vUv = uv;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `,
+      fragmentShader: `
+        uniform float uTime;
+        uniform vec2 uPointer;
+        uniform vec3 uColorCore;
+        uniform vec3 uColorMid;
+        uniform vec3 uColorFringe;
+        uniform float uAlpha;
+
+        varying vec2 vUv;
+
+        void main() {
+          vec2 centered = (vUv - vec2(0.5, 0.46)) * 2.0;
+          centered.x += uPointer.x * 0.12;
+          centered.y += uPointer.y * 0.08;
+          centered.y *= 1.32;
+
+          float dist = length(centered);
+          float wave = sin(atan(centered.y, centered.x) * 4.0 + uTime * 0.3) * 0.035;
+          float r = dist + wave;
+
+          float coreFalloff = smoothstep(1.35, 0.0, r);
+          coreFalloff = pow(coreFalloff, 2.1);
+
+          float midBlend = smoothstep(0.10, 0.75, r);
+          vec3 atmosphereColor = mix(uColorCore, uColorMid, midBlend);
+
+          float fringeBlend = smoothstep(0.60, 1.20, r);
+          atmosphereColor = mix(atmosphereColor, uColorFringe, fringeBlend);
+
+          gl_FragColor = vec4(atmosphereColor, coreFalloff * uAlpha);
+        }
+      `,
+      transparent: true,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+    });
+  }, []);
+
+  useFrame((state) => {
+    if (!shaderMatRef.current) return;
+    const progress = THREE.MathUtils.clamp(progressRef.current, 0, 5);
+    const idx = Math.floor(progress);
+    const nextIdx = Math.min(idx + 1, CHAPTER_ATMOSPHERE.length - 1);
+    const t = progress - idx;
+
+    const curr = CHAPTER_ATMOSPHERE[idx];
+    const nxt = CHAPTER_ATMOSPHERE[nextIdx];
+
+    tempCore.lerpColors(curr.core, nxt.core, t);
+    tempMid.lerpColors(curr.mid, nxt.mid, t);
+    tempFringe.lerpColors(curr.fringe, nxt.fringe, t);
+    const alpha = THREE.MathUtils.lerp(curr.alpha, nxt.alpha, t);
+
+    shaderMatRef.current.uniforms.uTime.value = state.clock.getElapsedTime();
+    shaderMatRef.current.uniforms.uColorCore.value.copy(tempCore);
+    shaderMatRef.current.uniforms.uColorMid.value.copy(tempMid);
+    shaderMatRef.current.uniforms.uColorFringe.value.copy(tempFringe);
+    shaderMatRef.current.uniforms.uAlpha.value = alpha;
+    shaderMatRef.current.uniforms.uPointer.value.set(
+      state.pointer.x * 0.25,
+      state.pointer.y * 0.2
+    );
+  });
+
+  return (
+    <mesh ref={meshRef} position={[0, 0.4, -13.5]} scale={[30, 20, 1]}>
+      <planeGeometry args={[1, 1, 16, 16]} />
+      <primitive object={horizonMaterial} ref={shaderMatRef} attach="material" />
+    </mesh>
+  );
+};
+
 export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
   activeArchitectureId,
   onSelectArchitecture,
@@ -147,6 +366,16 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
   const topLightRef = useRef<THREE.PointLight>(null);
   const fogRef = useRef<THREE.Fog>(null);
   const prefersReducedRef = useRef(false);
+
+  // Cinematic camera travel coordinates & continuous global chapter journey progress (0.0 to 5.0)
+  const baseCameraPos = useRef(new THREE.Vector3(0, 0, 6.2));
+  const baseCameraRot = useRef(new THREE.Euler(0, 0, 0));
+  const journeyProgress = useRef(0.0);
+
+  // Memoized temporary colors for zero-allocation per-frame lighting and fog interpolation
+  const tempFog = React.useMemo(() => new THREE.Color(), []);
+  const tempKeyColor = React.useMemo(() => new THREE.Color(), []);
+  const tempRimColor = React.useMemo(() => new THREE.Color(), []);
 
   const { viewport, gl, scene, camera } = useThree();
 
@@ -298,6 +527,7 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
     const endScale = isDesktop ? 1.0 : Math.min(Math.max(viewport.width / 7.5, 0.52), 0.72);
 
     // Timeline 1: THRESHOLD -> AFTERIMAGE
+    // Cinematic Villa Aurelia-style camera flight and atmospheric transformation
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: '#afterimage',
@@ -308,16 +538,57 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
       },
     });
 
-    tl.to(
-      rig.position,
-      {
-        x: endX,
-        y: endY,
-        z: endZ,
-        ease: 'power2.out',
-      },
-      0
-    )
+    tl.to(journeyProgress, { current: 1.0, ease: 'power2.inOut' }, 0)
+      .to(
+        baseCameraPos.current,
+        {
+          x: isDesktop ? 0.38 : 0.15,
+          y: -0.22,
+          z: 4.6,
+          duration: 0.48,
+          ease: 'power1.inOut',
+        },
+        0
+      )
+      .to(
+        baseCameraRot.current,
+        {
+          z: -0.022,
+          duration: 0.48,
+          ease: 'power1.inOut',
+        },
+        0
+      )
+      .to(
+        baseCameraPos.current,
+        {
+          x: isDesktop ? -0.32 : 0,
+          y: 0.08,
+          z: 5.6,
+          duration: 0.52,
+          ease: 'power2.out',
+        },
+        0.48
+      )
+      .to(
+        baseCameraRot.current,
+        {
+          z: 0,
+          duration: 0.52,
+          ease: 'power2.out',
+        },
+        0.48
+      )
+      .to(
+        rig.position,
+        {
+          x: endX,
+          y: endY,
+          z: endZ,
+          ease: 'power2.out',
+        },
+        0
+      )
       .to(
         rig.scale,
         {
@@ -331,16 +602,10 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
       .to(
         rig.rotation,
         {
-          y: Math.PI * 0.7,
+          y: Math.PI * 0.85,
+          x: 0.12,
+          z: -0.06,
           ease: 'power1.inOut',
-        },
-        0
-      )
-      .to(
-        camera.position,
-        {
-          z: 5.75,
-          ease: 'power2.out',
         },
         0
       );
@@ -360,6 +625,47 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
       });
 
       archTl
+        .to(journeyProgress, { current: 2.0, ease: 'power2.inOut' }, 0)
+        .to(
+          baseCameraPos.current,
+          {
+            x: isDesktop ? 0.28 : 0.12,
+            y: -0.14,
+            z: 5.1,
+            duration: 0.46,
+            ease: 'power1.inOut',
+          },
+          0
+        )
+        .to(
+          baseCameraRot.current,
+          {
+            z: 0.018,
+            duration: 0.46,
+            ease: 'power1.inOut',
+          },
+          0
+        )
+        .to(
+          baseCameraPos.current,
+          {
+            x: 0,
+            y: 0,
+            z: 6.25,
+            duration: 0.54,
+            ease: 'power2.out',
+          },
+          0.46
+        )
+        .to(
+          baseCameraRot.current,
+          {
+            z: 0,
+            duration: 0.54,
+            ease: 'power2.out',
+          },
+          0.46
+        )
         .to(
           rig.position,
           {
@@ -407,14 +713,6 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
             ease: 'power2.out',
           },
           0
-        )
-        .to(
-          camera.position,
-          {
-            z: 6.25,
-            ease: 'power2.out',
-          },
-          0
         );
 
       // Timeline 3: SPATIAL ARCHITECTURE -> ARTIFACTS
@@ -432,6 +730,47 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
         });
 
         artifactsTl
+          .to(journeyProgress, { current: 3.0, ease: 'power2.inOut' }, 0)
+          .to(
+            baseCameraPos.current,
+            {
+              x: isDesktop ? -0.3 : -0.1,
+              y: 0.12,
+              z: 5.3,
+              duration: 0.48,
+              ease: 'power1.inOut',
+            },
+            0
+          )
+          .to(
+            baseCameraRot.current,
+            {
+              z: -0.016,
+              duration: 0.48,
+              ease: 'power1.inOut',
+            },
+            0
+          )
+          .to(
+            baseCameraPos.current,
+            {
+              x: 0,
+              y: 0,
+              z: 6.0,
+              duration: 0.52,
+              ease: 'power2.out',
+            },
+            0.48
+          )
+          .to(
+            baseCameraRot.current,
+            {
+              z: 0,
+              duration: 0.52,
+              ease: 'power2.out',
+            },
+            0.48
+          )
           .to(
             rig.position,
             {
@@ -489,14 +828,6 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
               ease: 'power2.out',
             },
             0
-          )
-          .to(
-            camera.position,
-            {
-              z: 6.0,
-              ease: 'power2.out',
-            },
-            0
           );
 
         // Timeline 4: ARTIFACTS -> RESONANCE
@@ -514,6 +845,47 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
           });
 
           resonanceTl
+            .to(journeyProgress, { current: 4.0, ease: 'power2.inOut' }, 0)
+            .to(
+              baseCameraPos.current,
+              {
+                x: isDesktop ? 0.24 : 0.08,
+                y: -0.12,
+                z: 5.1,
+                duration: 0.46,
+                ease: 'power1.inOut',
+              },
+              0
+            )
+            .to(
+              baseCameraRot.current,
+              {
+                z: 0.015,
+                duration: 0.46,
+                ease: 'power1.inOut',
+              },
+              0
+            )
+            .to(
+              baseCameraPos.current,
+              {
+                x: 0,
+                y: -0.05,
+                z: 5.75,
+                duration: 0.54,
+                ease: 'power2.out',
+              },
+              0.46
+            )
+            .to(
+              baseCameraRot.current,
+              {
+                z: 0,
+                duration: 0.54,
+                ease: 'power2.out',
+              },
+              0.46
+            )
             .to(
               artifactsGroup.position,
               {
@@ -552,14 +924,6 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
                 ease: 'power2.out',
               },
               0
-            )
-            .to(
-              camera.position,
-              {
-                z: 5.75,
-                ease: 'power2.out',
-              },
-              0
             );
 
           // Timeline 5: RESONANCE -> CODA (Final Deliberate Ending)
@@ -576,6 +940,29 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
           });
 
           codaTl
+            .to(journeyProgress, { current: 5.0, ease: 'power2.inOut' }, 0)
+            .to(
+              baseCameraPos.current,
+              {
+                x: 0,
+                y: 0.06,
+                z: 6.1,
+                duration: 0.48,
+                ease: 'power1.inOut',
+              },
+              0
+            )
+            .to(
+              baseCameraPos.current,
+              {
+                x: 0,
+                y: 0.15,
+                z: 6.45,
+                duration: 0.52,
+                ease: 'power2.out',
+              },
+              0.48
+            )
             .to(
               resonanceGroup.position,
               {
@@ -594,27 +981,7 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
                 ease: 'power2.out',
               },
               0
-            )
-            .to(
-              camera.position,
-              {
-                z: 6.45,
-                ease: 'power2.out',
-              },
-              0
             );
-
-          if (fogRef.current) {
-            codaTl.to(
-              fogRef.current,
-              {
-                far: 25,
-                near: 7.2,
-                ease: 'power2.out',
-              },
-              0
-            );
-          }
         }
       }
     }
@@ -667,12 +1034,58 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
       rimLightRef.current.intensity = 0.85 + Math.sin(breatheTime * 0.9) * 0.04;
     }
 
-    // Restrained optical 3D parallax: camera responds smoothly to pointer
+    // Cinematic 3D camera travel tracking with restrained pointer parallax
     if (!prefersReduced) {
-      const targetCamX = px * 0.22;
-      const targetCamY = py * 0.16;
-      state.camera.position.x = THREE.MathUtils.lerp(state.camera.position.x, targetCamX, 0.04);
-      state.camera.position.y = THREE.MathUtils.lerp(state.camera.position.y, targetCamY, 0.04);
+      const targetCamX = baseCameraPos.current.x + px * 0.22;
+      const targetCamY = baseCameraPos.current.y + py * 0.16;
+      const targetCamZ = baseCameraPos.current.z;
+
+      state.camera.position.x = THREE.MathUtils.lerp(state.camera.position.x, targetCamX, 0.05);
+      state.camera.position.y = THREE.MathUtils.lerp(state.camera.position.y, targetCamY, 0.05);
+      state.camera.position.z = THREE.MathUtils.lerp(state.camera.position.z, targetCamZ, 0.05);
+      state.camera.rotation.z = THREE.MathUtils.lerp(state.camera.rotation.z, baseCameraRot.current.z, 0.05);
+    } else {
+      state.camera.position.set(baseCameraPos.current.x, baseCameraPos.current.y, baseCameraPos.current.z);
+      state.camera.rotation.z = 0;
+    }
+
+    // Continuous multi-chapter atmospheric & lighting transformation across all 6 sections (0.0 to 5.0)
+    const progress = THREE.MathUtils.clamp(journeyProgress.current, 0, 5);
+    const idx = Math.min(Math.floor(progress), CHAPTER_ATMOSPHERE.length - 2);
+    const nextIdx = Math.min(idx + 1, CHAPTER_ATMOSPHERE.length - 1);
+    const t = progress - idx;
+
+    const currAtm = CHAPTER_ATMOSPHERE[idx];
+    const nxtAtm = CHAPTER_ATMOSPHERE[nextIdx];
+
+    // Dynamic Fog: continuous smooth color & depth gradient
+    if (fogRef.current) {
+      tempFog.lerpColors(currAtm.fog, nxtAtm.fog, t);
+      fogRef.current.color.copy(tempFog);
+      fogRef.current.far = THREE.MathUtils.lerp(currAtm.fogFar, nxtAtm.fogFar, t);
+      fogRef.current.near = THREE.MathUtils.lerp(currAtm.fogNear, nxtAtm.fogNear, t);
+    }
+
+    // Dynamic Key Light: spectral color, intensity & pointer-reactive specular highlights
+    if (keyLightRef.current) {
+      tempKeyColor.lerpColors(currAtm.keyColor, nxtAtm.keyColor, t);
+      keyLightRef.current.color.copy(tempKeyColor);
+      const baseKeyIntensity = THREE.MathUtils.lerp(currAtm.keyIntensity, nxtAtm.keyIntensity, t);
+      keyLightRef.current.intensity = baseKeyIntensity + breatheLight + (Math.abs(px) + Math.abs(py)) * 0.12;
+    }
+
+    // Dynamic Rim / Counter Light: chromatic color balance & atmospheric separation
+    if (rimLightRef.current) {
+      tempRimColor.lerpColors(currAtm.rimColor, nxtAtm.rimColor, t);
+      rimLightRef.current.color.copy(tempRimColor);
+      const baseRimIntensity = THREE.MathUtils.lerp(currAtm.rimIntensity, nxtAtm.rimIntensity, t);
+      rimLightRef.current.intensity = baseRimIntensity + Math.sin(breatheTime * 0.9) * 0.04;
+    }
+
+    // Dynamic Top Light: delicate porcelain accent
+    if (topLightRef.current) {
+      const baseTopIntensity = THREE.MathUtils.lerp(currAtm.topIntensity, nxtAtm.topIntensity, t);
+      topLightRef.current.intensity = baseTopIntensity + Math.cos(breatheTime * 1.1) * 0.035;
     }
   });
 
@@ -718,6 +1131,9 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
         distance={18}
         decay={2}
       />
+
+      {/* Luminous Volumetric Horizon spanning the deep backdrop */}
+      <LuminousVolumetricHorizon progressRef={journeyProgress} />
 
       {/* Global suspended micro-motes floating across the deep volume */}
       <GlobalAtmosphere />

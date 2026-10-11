@@ -192,10 +192,12 @@ export const App: React.FC = () => {
           0.90
         );
 
-      // Multi-layered editorial parallax between THRESHOLD & AFTERIMAGE
+      // Multi-layered editorial parallax and cinematic spatial departure between THRESHOLD & AFTERIMAGE
       gsap.to('#hero-title', {
-        y: -28,
-        opacity: 0.2,
+        y: -36,
+        opacity: 0.12,
+        scale: 0.97,
+        filter: 'blur(3px)',
         ease: 'none',
         scrollTrigger: {
           trigger: '#afterimage',
@@ -204,9 +206,10 @@ export const App: React.FC = () => {
           scrub: 1.2,
         },
       });
-      gsap.to('.hero-description, .hero-details', {
-        y: -55,
-        opacity: 0.1,
+      gsap.to('.hero-description, .hero-details, .scroll-indicator', {
+        y: -65,
+        opacity: 0.06,
+        filter: 'blur(2px)',
         ease: 'none',
         scrollTrigger: {
           trigger: '#afterimage',
