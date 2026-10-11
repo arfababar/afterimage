@@ -170,50 +170,31 @@ export const App: React.FC = () => {
         .fromTo(
           '#genesis-title .title-reveal-word',
           { y: '125%', rotateX: -28, z: -45, opacity: 0 },
-          { y: '0%', rotateX: 0, z: 0, opacity: 1, duration: 1.4, stagger: 0.16, ease: 'power3.out' },
+          { y: '0%', rotateX: 0, z: 0, opacity: 1, duration: 1.4, ease: 'power3.out' },
           0.32
         )
         .fromTo(
           '.genesis-description',
           { opacity: 0, y: 22 },
           { opacity: 1, y: 0, duration: 0.95, ease: 'power2.out' },
-          0.72
-        )
-        .fromTo(
-          '.genesis-details .detail-item',
-          { opacity: 0, y: 16 },
-          { opacity: 1, y: 0, duration: 0.75, stagger: 0.1, ease: 'power2.out' },
-          0.92
+          0.65
         )
         .fromTo(
           '.genesis-section .scroll-indicator',
           { opacity: 0, y: 12 },
           { opacity: 1, y: 0, duration: 0.75, ease: 'power2.out' },
-          1.15
+          0.90
         );
 
-      // Departure scrubbed parallax from GENESIS to THRESHOLD (No CSS blur)
-      gsap.to('#genesis-title', {
-        y: -36,
-        opacity: 0.12,
-        scale: 0.97,
-        ease: 'none',
+      // Departure scrubbed parallax from GENESIS to THRESHOLD (fades out smoothly as camera approaches)
+      gsap.to('.genesis-content', {
+        y: -40,
+        opacity: 0,
+        ease: 'power1.in',
         scrollTrigger: {
-          trigger: '#threshold',
-          start: 'top bottom',
-          end: 'top 40%',
-          scrub: 1.2,
-        },
-      });
-
-      gsap.to('.genesis-description, .genesis-details, .genesis-section .scroll-indicator', {
-        y: -65,
-        opacity: 0.06,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: '#threshold',
-          start: 'top bottom',
-          end: 'top 40%',
+          trigger: '#genesis',
+          start: 'top 80px',
+          end: '40% top',
           scrub: 1.2,
         },
       });
@@ -225,9 +206,8 @@ export const App: React.FC = () => {
       const introTl = gsap.timeline({
         scrollTrigger: {
           trigger: '#threshold',
-          start: 'top 75%',
-          toggleActions: 'play none none none',
-          once: true,
+          start: 'top 30%',
+          toggleActions: 'play reverse play reverse',
         },
         defaults: { ease: 'power2.out' },
       });
@@ -758,47 +738,31 @@ export const App: React.FC = () => {
             id="genesis"
             aria-labelledby="genesis-title"
           >
-            <div className="genesis-content">
-              <p className="genesis-pretitle">
-                <span className="genesis-pretitle__indicator" aria-hidden="true" />
-                <span>01 // THE ORIGIN</span>
-              </p>
+            <div className="genesis-sticky-wrap">
+              <div className="genesis-content">
+                <p className="genesis-pretitle">
+                  <span className="genesis-pretitle__indicator" aria-hidden="true" />
+                  <span>01 // THE AWAKENING</span>
+                </p>
 
-              <h1 id="genesis-title" className="genesis-title" aria-label="GENESIS">
-                <span className="title-reveal-line" aria-hidden="true">
-                  <span className="title-reveal-word">GENESIS</span>
-                </span>
-                <span className="title-reveal-line" aria-hidden="true">
-                  <span className="title-reveal-word">OF LIGHT</span>
-                </span>
-              </h1>
+                <h1 id="genesis-title" className="genesis-title" aria-label="GENESIS">
+                  <span className="title-reveal-line" aria-hidden="true">
+                    <span className="title-reveal-word">GENESIS</span>
+                  </span>
+                </h1>
 
-              <p className="genesis-description">
-                Before afterimages linger in perception, the eye opens to raw light.
-                A cosmic threshold where sacred geometry and ethereal currents awaken memory.
-              </p>
+                <p className="genesis-description">
+                  Before afterimages linger in perception, the eye opens to raw light.
+                  A scroll-driven journey through celestial atmosphere and living memory.
+                </p>
 
-              <div className="genesis-details">
-                <div className="detail-item">
-                  <span className="detail-item__label">Phase</span>
-                  <span className="detail-item__value">01 / Genesis</span>
+                <div className="scroll-indicator" aria-label="Scroll prompt">
+                  <span className="scroll-indicator__line" aria-hidden="true" />
+                  <span>Scroll to begin the journey</span>
+                  <span className="scroll-indicator__icon" aria-hidden="true">
+                    <ArrowDown size={12} strokeWidth={1.5} />
+                  </span>
                 </div>
-                <div className="detail-item">
-                  <span className="detail-item__label">Sanctum</span>
-                  <span className="detail-item__value">Celestial Aura &amp; Form</span>
-                </div>
-                <div className="detail-item">
-                  <span className="detail-item__label">Focus</span>
-                  <span className="detail-item__value">Sacred Geometry &amp; Light</span>
-                </div>
-              </div>
-
-              <div className="scroll-indicator" aria-label="Scroll prompt">
-                <span className="scroll-indicator__line" aria-hidden="true" />
-                <span>Scroll to cross the threshold</span>
-                <span className="scroll-indicator__icon" aria-hidden="true">
-                  <ArrowDown size={12} strokeWidth={1.5} />
-                </span>
               </div>
             </div>
           </section>

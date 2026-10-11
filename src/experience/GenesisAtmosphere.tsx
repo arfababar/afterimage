@@ -88,31 +88,39 @@ export const GenesisAtmosphere: React.FC<GenesisAtmosphereProps> = ({ opacityRef
           uv *= 1.0 - 0.22 * (sin(t * 0.28) * 0.5 + 0.5);
 
           vec3 col = vec3(0.0);
-          vec3 baseColor = vec3(0.065, 0.055, 0.085) * (1.0 + bg * 0.4);
+          // Warm muted terracotta / bronze ambient base
+          vec3 baseColor = vec3(0.11, 0.065, 0.05) * (1.0 + bg * 0.45);
 
           for (float i = 1.0; i < 9.0; i += 1.0) {
             uv += 0.08 * cos(i * vec2(0.1 + 0.01 * i, 0.8) + i * i + t * 0.35 + 0.1 * uv.x);
             vec2 p = uv;
             float d = length(p);
 
-            // Flowing ethereal cosmic filaments (Lavender #C6A6FF to Champagne Amber #E5A66D)
-            vec3 filamentTint = mix(
-              vec3(0.776, 0.651, 1.0),   // spectral violet
-              vec3(0.92, 0.76, 0.58),    // champagne gold / amber
-              sin(i * 0.85) * 0.5 + 0.5
-            );
+            // Flowing ethereal warm filaments: Blush Pink & Peach to Warm Champagne Gold & Soft Amber
+            vec3 blushPeach = vec3(0.97, 0.68, 0.60);
+            vec3 champagneGold = vec3(0.98, 0.82, 0.54);
+            vec3 softAmber = vec3(0.92, 0.60, 0.34);
+            vec3 warmIvory = vec3(1.0, 0.95, 0.88);
 
-            col += (0.00115 / max(d, 0.012)) * filamentTint;
+            vec3 filamentTint = mix(
+              blushPeach,
+              champagneGold,
+              sin(i * 0.75 + t * 0.15) * 0.5 + 0.5
+            );
+            filamentTint = mix(filamentTint, softAmber, cos(i * 0.5) * 0.3 + 0.3);
+
+            col += (0.00135 / max(d, 0.012)) * filamentTint;
             float b = noise(i + p + bg * 1.731);
-            col += (0.0018 * b / max(length(max(p, vec2(b * p.x * 0.02, p.y))), 0.01)) * vec3(0.73, 0.78, 0.94);
-            col = mix(col, vec3(bg * 0.15, bg * 0.11, bg * 0.20), clamp(d * 0.4, 0.0, 1.0));
+            col += (0.0020 * b / max(length(max(p, vec2(b * p.x * 0.02, p.y))), 0.01)) * warmIvory;
+            // Warm golden-peach atmospheric cloud depth
+            col = mix(col, vec3(bg * 0.28, bg * 0.16, bg * 0.11), clamp(d * 0.45, 0.0, 1.0));
           }
 
           vec3 finalColor = baseColor + col;
-          float vig = 1.0 - smoothstep(0.45, 1.45, length(vUv - 0.5));
+          float vig = 1.0 - smoothstep(0.42, 1.5, length(vUv - 0.5));
           finalColor *= vig;
 
-          float alpha = uOpacity * clamp(length(finalColor) * 1.4, 0.0, 0.92);
+          float alpha = uOpacity * clamp(length(finalColor) * 1.45, 0.0, 0.94);
           gl_FragColor = vec4(finalColor, alpha);
         }
       `,

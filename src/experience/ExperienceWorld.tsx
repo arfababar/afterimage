@@ -371,11 +371,12 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
   const prefersReducedRef = useRef(false);
 
   // Cinematic camera travel coordinates & continuous global chapter journey progress (0.0 to 5.0)
-  // Section 1 (Genesis) starts at (0, 0.08, 4.8), Section 2 (Threshold) arrives at (0, 0, 6.2)
-  const baseCameraPos = useRef(new THREE.Vector3(0, 0.08, 4.8));
+  // Section 1 (Genesis) starts at (0, 0.05, 3.8) for full-body character framing
+  const baseCameraPos = useRef(new THREE.Vector3(0, 0.05, 3.8));
   const baseCameraRot = useRef(new THREE.Euler(0, 0, 0));
   const journeyProgress = useRef(0.0);
   const genesisOpacityRef = useRef(1.0);
+  const genesisBloomRef = useRef(0.0);
 
   // Memoized temporary colors for zero-allocation per-frame lighting and fog interpolation
   const tempFog = React.useMemo(() => new THREE.Color(), []);
@@ -511,7 +512,7 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
     if (genesisGroup) {
       ScrollTrigger.create({
         trigger: '#genesis',
-        start: 'top top',
+        start: 'top bottom',
         end: 'bottom top',
         onToggle: (self) => {
           if (genesisGroup) genesisGroup.visible = self.isActive;
@@ -537,47 +538,84 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
     }
 
     // Timeline 0: GENESIS -> THRESHOLD
-    // Cinematic camera travel from the celestial Genesis sanctum into the Threshold sculpture
+    // Cinematic scroll-driven camera journey:
+    // Phase 1 (0.00 -> 0.42): Full-body view approaches upper-body
+    // Phase 2 (0.42 -> 0.76): Upper-body approaches intimate face close-up
+    // Phase 3 (0.76 -> 0.92): Pushes through face into warm luminous veil/bloom
+    // Phase 4 (0.92 -> 1.00): Handoff into Section 2 with zero coordinate snaps
     const genesisTl = gsap.timeline({
       scrollTrigger: {
-        trigger: '#threshold',
-        start: 'top bottom',
-        end: 'top top',
+        trigger: '#genesis',
+        start: 'top 80px',
+        end: 'bottom top',
         scrub: 1.2,
         invalidateOnRefresh: true,
       },
     });
 
     genesisTl
-      .fromTo(genesisOpacityRef, { current: 1.0 }, { current: 0.0, duration: 0.85, ease: 'power2.inOut' }, 0)
+      // Phase 1: Camera approach from full-body (z: 3.8, y: 0.05) to upper-body (z: 1.7, y: 0.36)
       .fromTo(
         baseCameraPos.current,
-        {
-          x: 0,
-          y: 0.08,
-          z: 4.8,
-        },
-        {
-          x: 0,
-          y: 0,
-          z: 6.2,
-          ease: 'power2.inOut',
-        },
+        { x: 0, y: 0.05, z: 3.8 },
+        { x: 0, y: 0.36, z: 1.7, duration: 0.42, ease: 'sine.inOut' },
         0
       )
+      // Phase 2: Camera advances to face close-up (z: 0.72, y: 0.62)
+      .to(
+        baseCameraPos.current,
+        { x: 0, y: 0.62, z: 0.72, duration: 0.34, ease: 'sine.inOut' },
+        0.42
+      )
+      // Phase 3: Push-through past face into radiant veil (z: 0.28, y: 0.62)
+      .to(
+        baseCameraPos.current,
+        { x: 0, y: 0.62, z: 0.28, duration: 0.16, ease: 'power2.in' },
+        0.76
+      )
+      // Phase 4: Settle camera at Section 2 starting coordinates (z: 6.2, y: 0.0)
+      .to(
+        baseCameraPos.current,
+        { x: 0, y: 0.0, z: 6.2, duration: 0.08, ease: 'power2.out' },
+        0.92
+      )
+      // Character Opacity: 100% visible throughout approach, gently dissipates during veil penetration
       .fromTo(
-        baseCameraRot.current,
-        { z: 0 },
-        { z: 0, ease: 'power2.inOut' },
+        genesisOpacityRef,
+        { current: 1.0 },
+        { current: 1.0, duration: 0.76 },
         0
+      )
+      .to(
+        genesisOpacityRef,
+        { current: 0.0, duration: 0.16, ease: 'power2.in' },
+        0.76
+      )
+      // Transition Bloom: warm peach & ivory screen bloom activates during face penetration, clears for Section 2
+      .fromTo(
+        genesisBloomRef,
+        { current: 0.0 },
+        { current: 0.0, duration: 0.76 },
+        0
+      )
+      .to(
+        genesisBloomRef,
+        { current: 1.0, duration: 0.16, ease: 'power2.in' },
+        0.76
+      )
+      .to(
+        genesisBloomRef,
+        { current: 0.0, duration: 0.08, ease: 'power2.out' },
+        0.92
       );
 
     if (rig) {
+      // Threshold sculpture ascends from deep below during the bloom transition
       genesisTl.fromTo(
         rig.position,
-        { x: startX, y: startY - 7.5, z: startZ - 3.5 },
-        { x: startX, y: startY, z: startZ, ease: 'power2.out' },
-        0
+        { x: startX, y: startY - 18.0, z: startZ - 5.0 },
+        { x: startX, y: startY, z: startZ, duration: 0.24, ease: 'power2.out' },
+        0.76
       );
     }
 
@@ -1225,7 +1263,11 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
       {/* Section 1: Genesis Cosmic Shader Atmosphere & Sanctum */}
       <group ref={genesisGroupRef} name="genesis-rig">
         <GenesisAtmosphere opacityRef={genesisOpacityRef} pointerRef={lightPointer} />
-        <GenesisSanctum opacityRef={genesisOpacityRef} pointerRef={lightPointer} />
+        <GenesisSanctum
+          opacityRef={genesisOpacityRef}
+          pointerRef={lightPointer}
+          bloomRef={genesisBloomRef}
+        />
       </group>
 
       {/* Luminous Volumetric Horizon spanning the deep backdrop */}
