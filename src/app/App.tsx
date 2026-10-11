@@ -149,10 +149,88 @@ export const App: React.FC = () => {
       if (prefersReduced) return;
 
       // ========================================================================
-      // 1. THRESHOLD (Section 01) — Initial mount entrance
+      // 0. GENESIS (Section 01) — Initial mount entrance
       // Headings emerge from 3D depth, lines reveal progressively, prose glides up
       // ========================================================================
-      const introTl = gsap.timeline({ defaults: { ease: 'power2.out' } });
+      const genesisIntroTl = gsap.timeline({ defaults: { ease: 'power2.out' } });
+
+      genesisIntroTl
+        .fromTo(
+          '.genesis-pretitle__indicator',
+          { scaleX: 0, opacity: 0 },
+          { scaleX: 1, opacity: 1, duration: 0.85, ease: 'expo.out' },
+          0.1
+        )
+        .fromTo(
+          '.genesis-pretitle span:last-child',
+          { opacity: 0, x: -12, letterSpacing: '0.24em' },
+          { opacity: 1, x: 0, letterSpacing: '0.15em', duration: 0.85, ease: 'power2.out' },
+          0.22
+        )
+        .fromTo(
+          '#genesis-title .title-reveal-word',
+          { y: '125%', rotateX: -28, z: -45, opacity: 0 },
+          { y: '0%', rotateX: 0, z: 0, opacity: 1, duration: 1.4, stagger: 0.16, ease: 'power3.out' },
+          0.32
+        )
+        .fromTo(
+          '.genesis-description',
+          { opacity: 0, y: 22 },
+          { opacity: 1, y: 0, duration: 0.95, ease: 'power2.out' },
+          0.72
+        )
+        .fromTo(
+          '.genesis-details .detail-item',
+          { opacity: 0, y: 16 },
+          { opacity: 1, y: 0, duration: 0.75, stagger: 0.1, ease: 'power2.out' },
+          0.92
+        )
+        .fromTo(
+          '.genesis-section .scroll-indicator',
+          { opacity: 0, y: 12 },
+          { opacity: 1, y: 0, duration: 0.75, ease: 'power2.out' },
+          1.15
+        );
+
+      // Departure scrubbed parallax from GENESIS to THRESHOLD (No CSS blur)
+      gsap.to('#genesis-title', {
+        y: -36,
+        opacity: 0.12,
+        scale: 0.97,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '#threshold',
+          start: 'top bottom',
+          end: 'top 40%',
+          scrub: 1.2,
+        },
+      });
+
+      gsap.to('.genesis-description, .genesis-details, .genesis-section .scroll-indicator', {
+        y: -65,
+        opacity: 0.06,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '#threshold',
+          start: 'top bottom',
+          end: 'top 40%',
+          scrub: 1.2,
+        },
+      });
+
+      // ========================================================================
+      // 1. THRESHOLD (Section 02) — Viewport arrival entrance
+      // Headings emerge from 3D depth, lines reveal progressively, prose glides up
+      // ========================================================================
+      const introTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: '#threshold',
+          start: 'top 75%',
+          toggleActions: 'play none none none',
+          once: true,
+        },
+        defaults: { ease: 'power2.out' },
+      });
 
       introTl
         .fromTo(
@@ -175,8 +253,8 @@ export const App: React.FC = () => {
         )
         .fromTo(
           '.hero-description',
-          { opacity: 0, y: 22, filter: 'blur(3px)' },
-          { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.95, ease: 'power2.out' },
+          { opacity: 0, y: 22 },
+          { opacity: 1, y: 0, duration: 0.95, ease: 'power2.out' },
           0.55
         )
         .fromTo(
@@ -186,7 +264,7 @@ export const App: React.FC = () => {
           0.72
         )
         .fromTo(
-          '.scroll-indicator',
+          '.hero-section .scroll-indicator',
           { opacity: 0, y: 14 },
           { opacity: 1, y: 0, duration: 0.75, ease: 'power2.out' },
           0.90
@@ -205,7 +283,7 @@ export const App: React.FC = () => {
           scrub: 1.2,
         },
       });
-      gsap.to('.hero-description, .hero-details, .scroll-indicator', {
+      gsap.to('.hero-description, .hero-details, .hero-section .scroll-indicator', {
         y: -65,
         opacity: 0.06,
         ease: 'none',
@@ -617,12 +695,15 @@ export const App: React.FC = () => {
       {/* Editorial Page Container */}
       <div ref={containerRef} className="page-container">
         <header className="site-header">
-          <a href="#threshold" className="site-wordmark" aria-label="AFTERIMAGE Home">
+          <a href="#genesis" className="site-wordmark" aria-label="AFTERIMAGE Home">
             <span className="site-wordmark__glyph" aria-hidden="true" />
             <span>AFTERIMAGE</span>
           </a>
 
           <nav className="site-nav" aria-label="Primary Navigation">
+            <a href="#genesis" className="nav-link">
+              GENESIS
+            </a>
             <a href="#threshold" className="nav-link">
               THRESHOLD
             </a>
@@ -671,7 +752,58 @@ export const App: React.FC = () => {
         </header>
 
         <main className="site-main" id="main-content">
-          {/* Section 1: THRESHOLD */}
+          {/* Section 1: GENESIS / ORIGIN */}
+          <section
+            className="section-panel genesis-section"
+            id="genesis"
+            aria-labelledby="genesis-title"
+          >
+            <div className="genesis-content">
+              <p className="genesis-pretitle">
+                <span className="genesis-pretitle__indicator" aria-hidden="true" />
+                <span>01 // THE ORIGIN</span>
+              </p>
+
+              <h1 id="genesis-title" className="genesis-title" aria-label="GENESIS">
+                <span className="title-reveal-line" aria-hidden="true">
+                  <span className="title-reveal-word">GENESIS</span>
+                </span>
+                <span className="title-reveal-line" aria-hidden="true">
+                  <span className="title-reveal-word">OF LIGHT</span>
+                </span>
+              </h1>
+
+              <p className="genesis-description">
+                Before afterimages linger in perception, the eye opens to raw light.
+                A cosmic threshold where sacred geometry and ethereal currents awaken memory.
+              </p>
+
+              <div className="genesis-details">
+                <div className="detail-item">
+                  <span className="detail-item__label">Phase</span>
+                  <span className="detail-item__value">01 / Genesis</span>
+                </div>
+                <div className="detail-item">
+                  <span className="detail-item__label">Sanctum</span>
+                  <span className="detail-item__value">Celestial Aura &amp; Form</span>
+                </div>
+                <div className="detail-item">
+                  <span className="detail-item__label">Focus</span>
+                  <span className="detail-item__value">Sacred Geometry &amp; Light</span>
+                </div>
+              </div>
+
+              <div className="scroll-indicator" aria-label="Scroll prompt">
+                <span className="scroll-indicator__line" aria-hidden="true" />
+                <span>Scroll to cross the threshold</span>
+                <span className="scroll-indicator__icon" aria-hidden="true">
+                  <ArrowDown size={12} strokeWidth={1.5} />
+                </span>
+              </div>
+            </div>
+          </section>
+
+          {/* Section 2: THRESHOLD */}
           <section
             className="section-panel hero-section"
             id="threshold"
@@ -680,17 +812,17 @@ export const App: React.FC = () => {
             <div className="hero-content">
               <p className="hero-pretitle">
                 <span className="hero-pretitle__indicator" aria-hidden="true" />
-                <span>01 // FIRST GLANCE</span>
+                <span>02 // THRESHOLD</span>
               </p>
 
-              <h1 id="hero-title" className="hero-title" aria-label="AFTERIMAGE">
+              <h2 id="hero-title" className="hero-title" aria-label="AFTERIMAGE">
                 <span className="title-reveal-line" aria-hidden="true">
                   <span className="title-reveal-word">AFTER</span>
                 </span>
                 <span className="title-reveal-line" aria-hidden="true">
                   <span className="title-reveal-word">IMAGE</span>
                 </span>
-              </h1>
+              </h2>
 
               <p className="hero-description">
                 When bright light hits the eye, the shape lingers long after you look away.
@@ -700,7 +832,7 @@ export const App: React.FC = () => {
               <div className="hero-details">
                 <div className="detail-item">
                   <span className="detail-item__label">Phase</span>
-                  <span className="detail-item__value">01 / Threshold</span>
+                  <span className="detail-item__value">02 / Threshold</span>
                 </div>
                 <div className="detail-item">
                   <span className="detail-item__label">Medium</span>
@@ -722,7 +854,7 @@ export const App: React.FC = () => {
             </div>
           </section>
 
-          {/* Section 2: AFTERIMAGE */}
+          {/* Section 3: AFTERIMAGE */}
           <section
             className="section-panel afterimage-section"
             id="afterimage"
@@ -731,7 +863,7 @@ export const App: React.FC = () => {
             <div className="afterimage-content">
               <p className="afterimage-pretitle">
                 <span className="afterimage-pretitle__indicator" aria-hidden="true" />
-                <span>02 // THE AFTERIMAGE</span>
+                <span>03 // RESIDUAL LIGHT</span>
               </p>
 
               <h2 id="afterimage-title" className="afterimage-title" aria-label="RESIDUAL LIGHT">
@@ -766,7 +898,7 @@ export const App: React.FC = () => {
             </div>
           </section>
 
-          {/* Section 3: SPATIAL ARCHITECTURE */}
+          {/* Section 4: SPATIAL ARCHITECTURE */}
           <section
             className="section-panel architecture-section"
             id="architecture"
@@ -775,7 +907,7 @@ export const App: React.FC = () => {
             <div className="architecture-header">
               <p className="architecture-pretitle">
                 <span className="architecture-pretitle__indicator" aria-hidden="true" />
-                <span>03 // THREE STRUCTURES</span>
+                <span>04 // THREE STRUCTURES</span>
               </p>
 
               <h2 id="architecture-title" className="architecture-title" aria-label="THREE FORMS">
@@ -790,7 +922,7 @@ export const App: React.FC = () => {
               {/* Original Editorial Narrative Block */}
               <div className="architecture-narrative-block">
                 <div className="editorial-meta-row">
-                  <span className="editorial-meta-item">STUDY 03</span>
+                  <span className="editorial-meta-item">STUDY 04</span>
                   <span className="editorial-meta-divider" aria-hidden="true">·</span>
                   <span className="editorial-meta-item">PROCEDURAL GEOMETRY</span>
                   <span className="editorial-meta-divider" aria-hidden="true">·</span>
@@ -921,7 +1053,7 @@ export const App: React.FC = () => {
             </div>
           </section>
 
-          {/* Section 4: ARTIFACTS — Floating Abstract Forms */}
+          {/* Section 5: ARTIFACTS — Floating Abstract Forms */}
           <section
             className="section-panel artifacts-section"
             id="artifacts"
@@ -930,7 +1062,7 @@ export const App: React.FC = () => {
             <div className="artifacts-header">
               <p className="artifacts-pretitle">
                 <span className="artifacts-pretitle__indicator" aria-hidden="true" />
-                <span>04 // THREE ARTIFACTS</span>
+                <span>05 // THREE ARTIFACTS</span>
               </p>
 
               <h2 id="artifacts-title" className="artifacts-title" aria-label="KINETIC FORMS">
@@ -944,7 +1076,7 @@ export const App: React.FC = () => {
 
               <div className="artifacts-narrative-block">
                 <div className="editorial-meta-row">
-                  <span className="editorial-meta-item">STUDY 04</span>
+                  <span className="editorial-meta-item">STUDY 05</span>
                   <span className="editorial-meta-divider" aria-hidden="true">·</span>
                   <span className="editorial-meta-item">SURFACE REFRACTION</span>
                   <span className="editorial-meta-divider" aria-hidden="true">·</span>
@@ -1088,7 +1220,7 @@ export const App: React.FC = () => {
             </div>
           </section>
 
-          {/* Section 5: RESONANCE (Sculptural Glass-Distortion Installation) */}
+          {/* Section 6: RESONANCE (Sculptural Glass-Distortion Installation) */}
           <section
             className="section-panel resonance-section"
             id="resonance"
@@ -1098,7 +1230,7 @@ export const App: React.FC = () => {
               <div className="resonance-header">
                 <p className="resonance-pretitle">
                   <span className="resonance-pretitle__indicator" aria-hidden="true" />
-                  <span>05 // OPTICAL RESONANCE</span>
+                  <span>06 // OPTICAL RESONANCE</span>
                 </p>
 
                 <h2 id="resonance-title" className="resonance-title" aria-label="RESONANCE">
@@ -1109,7 +1241,7 @@ export const App: React.FC = () => {
 
                 <div className="resonance-narrative-block">
                   <div className="editorial-meta-row">
-                    <span className="editorial-meta-item">STUDY 05</span>
+                    <span className="editorial-meta-item">STUDY 06</span>
                     <span className="editorial-meta-divider" aria-hidden="true">·</span>
                     <span className="editorial-meta-item">CAST OBSIDIAN</span>
                     <span className="editorial-meta-divider" aria-hidden="true">·</span>
@@ -1174,7 +1306,7 @@ export const App: React.FC = () => {
             </div>
           </section>
 
-          {/* Section 6: CODA — The Deliberate Ending */}
+          {/* Section 7: CODA — The Deliberate Ending */}
           <section
             className="section-panel coda-section"
             id="coda"
@@ -1183,7 +1315,7 @@ export const App: React.FC = () => {
             <div className="coda-content">
               <p className="coda-pretitle">
                 <span className="coda-pretitle__indicator" aria-hidden="true" />
-                <span>06 // CLOSING</span>
+                <span>07 // CLOSING</span>
               </p>
 
               <h2 id="coda-title" className="coda-title" aria-label="WHAT PERSISTS">

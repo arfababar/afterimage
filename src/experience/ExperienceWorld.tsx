@@ -6,6 +6,8 @@ import { HeroArtifact } from './HeroArtifact';
 import { SpatialArchitecture } from './SpatialArchitecture';
 import { ArtifactsShowcase } from './ArtifactsShowcase';
 import { ResonanceField } from './ResonanceField';
+import { GenesisAtmosphere } from './GenesisAtmosphere';
+import { GenesisSanctum } from './GenesisSanctum';
 
 export interface ExperienceWorldProps {
   activeArchitectureId?: string;
@@ -361,6 +363,7 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
   const architectureGroupRef = useRef<THREE.Group>(null);
   const artifactsGroupRef = useRef<THREE.Group>(null);
   const resonanceGroupRef = useRef<THREE.Group>(null);
+  const genesisGroupRef = useRef<THREE.Group>(null);
   const keyLightRef = useRef<THREE.DirectionalLight>(null);
   const rimLightRef = useRef<THREE.PointLight>(null);
   const topLightRef = useRef<THREE.PointLight>(null);
@@ -368,9 +371,11 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
   const prefersReducedRef = useRef(false);
 
   // Cinematic camera travel coordinates & continuous global chapter journey progress (0.0 to 5.0)
-  const baseCameraPos = useRef(new THREE.Vector3(0, 0, 6.2));
+  // Section 1 (Genesis) starts at (0, 0.08, 4.8), Section 2 (Threshold) arrives at (0, 0, 6.2)
+  const baseCameraPos = useRef(new THREE.Vector3(0, 0.08, 4.8));
   const baseCameraRot = useRef(new THREE.Euler(0, 0, 0));
   const journeyProgress = useRef(0.0);
+  const genesisOpacityRef = useRef(1.0);
 
   // Memoized temporary colors for zero-allocation per-frame lighting and fog interpolation
   const tempFog = React.useMemo(() => new THREE.Color(), []);
@@ -502,7 +507,20 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
       },
     });
 
+    const genesisGroup = genesisGroupRef.current;
+    if (genesisGroup) {
+      ScrollTrigger.create({
+        trigger: '#genesis',
+        start: 'top top',
+        end: 'bottom top',
+        onToggle: (self) => {
+          if (genesisGroup) genesisGroup.visible = self.isActive;
+        },
+      });
+    }
+
     if (prefersReduced) {
+      if (genesisGroup) genesisGroup.visible = false;
       if (archGroup) {
         archGroup.position.set(0, archEndY, 0);
         archGroup.scale.setScalar(archScale);
@@ -516,6 +534,51 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
         resonanceGroup.scale.setScalar(resonanceScale);
       }
       return;
+    }
+
+    // Timeline 0: GENESIS -> THRESHOLD
+    // Cinematic camera travel from the celestial Genesis sanctum into the Threshold sculpture
+    const genesisTl = gsap.timeline({
+      scrollTrigger: {
+        trigger: '#threshold',
+        start: 'top bottom',
+        end: 'top top',
+        scrub: 1.2,
+        invalidateOnRefresh: true,
+      },
+    });
+
+    genesisTl
+      .fromTo(genesisOpacityRef, { current: 1.0 }, { current: 0.0, duration: 0.85, ease: 'power2.inOut' }, 0)
+      .fromTo(
+        baseCameraPos.current,
+        {
+          x: 0,
+          y: 0.08,
+          z: 4.8,
+        },
+        {
+          x: 0,
+          y: 0,
+          z: 6.2,
+          ease: 'power2.inOut',
+        },
+        0
+      )
+      .fromTo(
+        baseCameraRot.current,
+        { z: 0 },
+        { z: 0, ease: 'power2.inOut' },
+        0
+      );
+
+    if (rig) {
+      genesisTl.fromTo(
+        rig.position,
+        { x: startX, y: startY - 7.5, z: startZ - 3.5 },
+        { x: startX, y: startY, z: startZ, ease: 'power2.out' },
+        0
+      );
     }
 
     // Destination in Section 2 (AFTERIMAGE):
@@ -1158,6 +1221,12 @@ export const ExperienceWorld: React.FC<ExperienceWorldProps> = ({
         distance={18}
         decay={2}
       />
+
+      {/* Section 1: Genesis Cosmic Shader Atmosphere & Sanctum */}
+      <group ref={genesisGroupRef} name="genesis-rig">
+        <GenesisAtmosphere opacityRef={genesisOpacityRef} pointerRef={lightPointer} />
+        <GenesisSanctum opacityRef={genesisOpacityRef} pointerRef={lightPointer} />
+      </group>
 
       {/* Luminous Volumetric Horizon spanning the deep backdrop */}
       <LuminousVolumetricHorizon progressRef={journeyProgress} />
